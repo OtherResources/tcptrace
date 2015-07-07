@@ -54,7 +54,7 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED rcsid_version[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/version.c,v 5.4 2003/11/19 14:38:06 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/version.c,v 5.4 2003/11/19 14:38:06 sdo Exp $";
 
 
 /* build information */

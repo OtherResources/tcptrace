@@ -67,7 +67,7 @@
 #endif
 
 static char const GCC_UNUSED rcsid_tcptrace[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/tcptrace.h,v 5.75 2003/11/19 20:13:35 ryellapr Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/tcptrace.h,v 5.75 2003/11/19 20:13:35 ryellapr Exp $";
 
 
 #include <stdio.h>
@@ -142,7 +142,7 @@ typedef struct pl_line *PLINE;
 
 /* max number of letters in endpoint name */
 /* (8 allows 26**8 different endpoints (209,000,000,000)
-    probably plenty for now!!!!!) */
+   probably plenty for now!!!!!) */
 #define MAX_HOSTLETTER_LEN 8 
 
 
@@ -154,7 +154,7 @@ typedef struct pl_line *PLINE;
    tt_uint16	unsigned 16 bit 
    tt_int32	signed 32 bit 
    tt_int16	signed 16 bit
-*/
+   */
 /* first, do the 32 bit ones */
 #if SIZEOF_UNSIGNED_LONG_INT == 4
 typedef unsigned long tt_uint32;
@@ -200,11 +200,11 @@ typedef u_short portnum;
 /* type for an IP address */
 /* IP address can be either IPv4 or IPv6 */
 typedef struct ipaddr {
-    u_char addr_vers;	/* 4 or 6 */
-    union {
-	struct in_addr   ip4;
-	struct in6_addr  ip6;
-    } un;
+  u_char addr_vers;	/* 4 or 6 */
+  union {
+    struct in_addr   ip4;
+    struct in6_addr  ip6;
+  } un;
 } ipaddr;
 
 #ifndef __VMS
@@ -243,10 +243,10 @@ typedef u_char Bool;
 
 /* ACK types */
 enum t_ack {NORMAL = 1,		/* no retransmits, just advance */
-	    AMBIG = 2,		/* segment ACKed was rexmitted */
-	    CUMUL = 3,		/* doesn't advance */
-	    TRIPLE = 4,		/* triple dupack */
-	    NOSAMP = 5};	/* covers retransmitted segs, no rtt sample */
+  AMBIG = 2,		/* segment ACKed was rexmitted */
+  CUMUL = 3,		/* doesn't advance */
+  TRIPLE = 4,		/* triple dupack */
+  NOSAMP = 5};	/* covers retransmitted segs, no rtt sample */
 
 /* type for an internal file pointer */
 typedef struct mfile MFILE;
@@ -275,284 +275,284 @@ extern u_long udp_trace_count;
 #endif
 
 typedef struct segment {
-    seqnum	seq_firstbyte;	/* seqnumber of first byte */
-    seqnum 	seq_lastbyte;	/* seqnumber of last byte */
-    u_char	retrans;	/* retransmit count */
-    u_int	acked;		/* how MANY times has has it been acked? */
-    timeval	time;		/* time the segment was sent */
-    struct segment *next;
-    struct segment *prev;
+  seqnum	seq_firstbyte;	/* seqnumber of first byte */
+  seqnum 	seq_lastbyte;	/* seqnumber of last byte */
+  u_char	retrans;	/* retransmit count */
+  u_int	acked;		/* how MANY times has has it been acked? */
+  timeval	time;		/* time the segment was sent */
+  struct segment *next;
+  struct segment *prev;
 } segment;
 
 typedef struct quadrant {
-    segment	*seglist_head;
-    segment	*seglist_tail;
-    Bool 	full;
-    struct quadrant *prev;
-    struct quadrant *next;
+  segment	*seglist_head;
+  segment	*seglist_tail;
+  Bool 	full;
+  struct quadrant *prev;
+  struct quadrant *next;
 } quadrant;
 
 typedef struct seqspace {
-    quadrant 	*pquad[4];
+  quadrant 	*pquad[4];
 } seqspace;
 
 typedef struct tcb {
-    /* parent pointer */
-    struct stcp_pair *ptp;
-    struct tcb	*ptwin;
+  /* parent pointer */
+  struct stcp_pair *ptp;
+  struct tcb	*ptwin;
 
-    /* TCP information */
-    seqnum	ack;
-    seqnum	seq;
-    seqnum	syn;
-    seqnum	fin;
-    seqnum	windowend;
-    timeval	time;
+  /* TCP information */
+  seqnum	ack;
+  seqnum	seq;
+  seqnum	syn;
+  seqnum	fin;
+  seqnum	windowend;
+  timeval	time;
 
-    /* TCP options */
-    u_int	mss;
-    Bool	f1323_ws;	/* did he request 1323 window scaling? */
-    Bool	f1323_ts;	/* did he request 1323 timestamps? */
-    Bool	fsack_req;	/* did he request SACKs? */
-    u_char	window_scale;
+  /* TCP options */
+  u_int	mss;
+  Bool	f1323_ws;	/* did he request 1323 window scaling? */
+  Bool	f1323_ts;	/* did he request 1323 timestamps? */
+  Bool	fsack_req;	/* did he request SACKs? */
+  u_char	window_scale;
 
-	/* If we are using window scaling, have we adjusted the 
-	   win_min field from the non-scaled window size
-	   that appeared in the SYN packet?? */
-    Bool window_stats_updated_for_scaling;
-    u_llong     win_scaled_pkts; /* Used to calculate avg win adv */
+  /* If we are using window scaling, have we adjusted the 
+     win_min field from the non-scaled window size
+     that appeared in the SYN packet?? */
+  Bool window_stats_updated_for_scaling;
+  u_llong     win_scaled_pkts; /* Used to calculate avg win adv */
 
-    /* statistics added */
-    u_llong	data_bytes;
-    u_llong	data_pkts;
-    u_llong	data_pkts_push;
-    u_llong	unique_bytes;	/* bytes sent (-FIN/SYN), excluding rexmits */
-    u_llong	rexmit_bytes;
-    u_llong	rexmit_pkts;
-    u_llong	ack_pkts;
-    u_llong	pureack_pkts;	/* mallman - pure acks, no data */
-    u_long	win_max;
-    u_long	win_min;
-    u_llong	win_tot;
-    u_long      win_last;  /* last advertised window size*/
-    u_long	win_zero_ct;
-    u_llong	packets;
-    u_char	syn_count;
-    u_char	fin_count;
-    u_char	reset_count;  /* resets SENT */
-    u_long	min_seg_size;
-    u_long	max_seg_size;
-    u_llong	out_order_pkts;	/* out of order packets */
-    u_llong	sacks_sent;	/* sacks returned */
-    u_long	ipv6_segments;	/* how many segments were ipv6? */
+  /* statistics added */
+  u_llong	data_bytes;
+  u_llong	data_pkts;
+  u_llong	data_pkts_push;
+  u_llong	unique_bytes;	/* bytes sent (-FIN/SYN), excluding rexmits */
+  u_llong	rexmit_bytes;
+  u_llong	rexmit_pkts;
+  u_llong	ack_pkts;
+  u_llong	pureack_pkts;	/* mallman - pure acks, no data */
+  u_long	win_max;
+  u_long	win_min;
+  u_llong	win_tot;
+  u_long      win_last;  /* last advertised window size*/
+  u_long	win_zero_ct;
+  u_llong	packets;
+  u_char	syn_count;
+  u_char	fin_count;
+  u_char	reset_count;  /* resets SENT */
+  u_long	min_seg_size;
+  u_long	max_seg_size;
+  u_llong	out_order_pkts;	/* out of order packets */
+  u_llong	sacks_sent;	/* sacks returned */
+  u_long	ipv6_segments;	/* how many segments were ipv6? */
 
 
-    /* stats on urgent data */
-    u_long     urg_data_bytes;
-    u_long     urg_data_pkts;
-   
-   /* Statistics to store the number of Zero window probes
-      seen and the total number of bytes spent for it. */
-    u_long      num_zwnd_probes;  
-    u_long      zwnd_probe_bytes;
+  /* stats on urgent data */
+  u_long     urg_data_bytes;
+  u_long     urg_data_pkts;
 
-    /* stats on sequence numbers */
+  /* Statistics to store the number of Zero window probes
+     seen and the total number of bytes spent for it. */
+  u_long      num_zwnd_probes;  
+  u_long      zwnd_probe_bytes;
 
-    seqnum	min_seq;	/* smallest seq number seen */
-    seqnum	max_seq;	/* largest seq number seen */
-    seqnum	latest_seq;	/* most recent seq number seen */
+  /* stats on sequence numbers */
 
-    /* stats on sequence space wrap arounds */
-    u_int quad1, quad2, quad3, quad4;  /* was every quadrant visited */
-    u_int seq_wrap_count;              /* wrap count */
-    
-    /* hardware duplicate detection */
+  seqnum	min_seq;	/* smallest seq number seen */
+  seqnum	max_seq;	/* largest seq number seen */
+  seqnum	latest_seq;	/* most recent seq number seen */
+
+  /* stats on sequence space wrap arounds */
+  u_int quad1, quad2, quad3, quad4;  /* was every quadrant visited */
+  u_int seq_wrap_count;              /* wrap count */
+
+  /* hardware duplicate detection */
 #define SEGS_TO_REMEMBER 8
-    struct str_hardware_dups {
-	seqnum	hwdup_seq;	/* sequence number */
-	u_short	hwdup_id;	/* IP ID */
-	u_long	hwdup_packnum; /* packet number */
-    } hardware_dups[SEGS_TO_REMEMBER];
-    u_long num_hardware_dups;
-    u_char hardware_dups_ix;
+  struct str_hardware_dups {
+    seqnum	hwdup_seq;	/* sequence number */
+    u_short	hwdup_id;	/* IP ID */
+    u_long	hwdup_packnum; /* packet number */
+  } hardware_dups[SEGS_TO_REMEMBER];
+  u_long num_hardware_dups;
+  u_char hardware_dups_ix;
 
-    /* did I detect any "bad" tcp behavior? */
-    /* at present, this means: */
-    /*  - SYNs retransmitted with different sequence numbers */
-    /*  - FINs retransmitted with different sequence numbers */
-    Bool	bad_behavior;
+  /* did I detect any "bad" tcp behavior? */
+  /* at present, this means: */
+  /*  - SYNs retransmitted with different sequence numbers */
+  /*  - FINs retransmitted with different sequence numbers */
+  Bool	bad_behavior;
 
-    /* added for initial window stats (for Mallman) */
-    u_long	initialwin_bytes;	/* initial window (in bytes) */
-    u_long	initialwin_segs;	/* initial window (in segments) */
-    Bool	data_acked;	/* has any non-SYN data been acked? */
+  /* added for initial window stats (for Mallman) */
+  u_long	initialwin_bytes;	/* initial window (in bytes) */
+  u_long	initialwin_segs;	/* initial window (in segments) */
+  Bool	data_acked;	/* has any non-SYN data been acked? */
 
-    /* added for (estimated) congestions window stats (for Mallman) */
-    u_long	owin_max;
-    u_long	owin_min;
-    u_llong	owin_tot;
-    u_llong	owin_wavg;  /* weighted owin */
-    u_llong     owin_count;
-    u_long	previous_owin_sample;
-    timeval     previous_owin_sample_time;
+  /* added for (estimated) congestions window stats (for Mallman) */
+  u_long	owin_max;
+  u_long	owin_min;
+  u_llong	owin_tot;
+  u_llong	owin_wavg;  /* weighted owin */
+  u_llong     owin_count;
+  u_long	previous_owin_sample;
+  timeval     previous_owin_sample_time;
 
-    /* RTT stats for singly-transmitted segments */
-    double	rtt_last;	/* RTT as of last good ACK (microseconds) */
-    u_long	rtt_min;
-    u_long	rtt_max;
-    double	rtt_sum;	/* for averages */
-    double	rtt_sum2;	/* sum of squares, for stdev */
-    u_long	rtt_count;	/* for averages */
-    /* RTT stats for multiply-transmitted segments */
-    u_long	rtt_min_last;
-    u_long	rtt_max_last;
-    double	rtt_sum_last;	/* from last transmission, for averages */
-    double	rtt_sum2_last;	/* sum of squares, for stdev */
-    u_long	rtt_count_last;	/* from last transmission, for averages */
+  /* RTT stats for singly-transmitted segments */
+  double	rtt_last;	/* RTT as of last good ACK (microseconds) */
+  u_long	rtt_min;
+  u_long	rtt_max;
+  double	rtt_sum;	/* for averages */
+  double	rtt_sum2;	/* sum of squares, for stdev */
+  u_long	rtt_count;	/* for averages */
+  /* RTT stats for multiply-transmitted segments */
+  u_long	rtt_min_last;
+  u_long	rtt_max_last;
+  double	rtt_sum_last;	/* from last transmission, for averages */
+  double	rtt_sum2_last;	/* sum of squares, for stdev */
+  u_long	rtt_count_last;	/* from last transmission, for averages */
 
-	/* To keep track of stats for FULL SIZE segments
-	   Simple heuristic :
-	   We shall treat the largest packet, so far seen as the
-	   "full size" packet and collect stats. accordingly.
-	   Upon seeing a bigger packet, we flush all stats. collected
-	   incorrectly and begin all over again */
-	u_long rtt_full_size; 
+  /* To keep track of stats for FULL SIZE segments
+     Simple heuristic :
+     We shall treat the largest packet, so far seen as the
+     "full size" packet and collect stats. accordingly.
+     Upon seeing a bigger packet, we flush all stats. collected
+     incorrectly and begin all over again */
+  u_long rtt_full_size; 
 
-	u_long rtt_full_min;
-	u_long rtt_full_max;
-	double rtt_full_sum;	/* for averages */
-	double rtt_full_sum2;	/* sum of squares for stdev */
-	u_long rtt_full_count;	/* for averages */ 
+  u_long rtt_full_min;
+  u_long rtt_full_max;
+  double rtt_full_sum;	/* for averages */
+  double rtt_full_sum2;	/* sum of squares for stdev */
+  u_long rtt_full_count;	/* for averages */ 
 
-	u_long rtt_3WHS;		/* rtt value used to seed RTO timers */
+  u_long rtt_3WHS;		/* rtt value used to seed RTO timers */
 
-    /* ACK Counters */
-    u_llong	rtt_amback;	/* ambiguous ACK */
-    u_llong	rtt_cumack;	/* segments only cumulativly ACKed */
-    u_llong	rtt_nosample;	/* segments ACKED, but after retransmission */
-				/* of earlier segments, so sample isn't */
-				/* valid */
-    u_llong	rtt_unkack;	/* unknown ACKs  ??? */
-    u_llong	rtt_dupack;	/* duplicate ACKs */
-    u_llong	rtt_triple_dupack; /* triple duplicate ACKs */
-    /* retransmission information */
-    seqspace    *ss;		/* the sequence space*/
-    u_long	retr_max;	/* maximum retransmissions ct */
-    u_long	retr_min_tm;	/* minimum retransmissions time */
-    u_long	retr_max_tm;	/* maximum retransmissions time */
-    double	retr_tm_sum;	/* for averages */
-    double	retr_tm_sum2;	/* sum of squares, for stdev */
-    u_long	retr_tm_count;	/* for averages */
+  /* ACK Counters */
+  u_llong	rtt_amback;	/* ambiguous ACK */
+  u_llong	rtt_cumack;	/* segments only cumulativly ACKed */
+  u_llong	rtt_nosample;	/* segments ACKED, but after retransmission */
+  /* of earlier segments, so sample isn't */
+  /* valid */
+  u_llong	rtt_unkack;	/* unknown ACKs  ??? */
+  u_llong	rtt_dupack;	/* duplicate ACKs */
+  u_llong	rtt_triple_dupack; /* triple duplicate ACKs */
+  /* retransmission information */
+  seqspace    *ss;		/* the sequence space*/
+  u_long	retr_max;	/* maximum retransmissions ct */
+  u_long	retr_min_tm;	/* minimum retransmissions time */
+  u_long	retr_max_tm;	/* maximum retransmissions time */
+  double	retr_tm_sum;	/* for averages */
+  double	retr_tm_sum2;	/* sum of squares, for stdev */
+  u_long	retr_tm_count;	/* for averages */
 
-    /* Instantaneous throughput info */
-    timeval	thru_firsttime;	/* time of first packet this interval */
-    u_long	thru_bytes;	/* number of bytes this interval */
-    u_long	thru_pkts;	/* number of packets this interval */
-    PLOTTER	thru_plotter;	/* throughput data dump file */
-    timeval	thru_lasttime;	/* time of previous segment */
-    PLINE	thru_avg_line;	/* average throughput line */
-    PLINE	thru_inst_line;	/* instantaneous throughput line */
+  /* Instantaneous throughput info */
+  timeval	thru_firsttime;	/* time of first packet this interval */
+  u_long	thru_bytes;	/* number of bytes this interval */
+  u_long	thru_pkts;	/* number of packets this interval */
+  PLOTTER	thru_plotter;	/* throughput data dump file */
+  timeval	thru_lasttime;	/* time of previous segment */
+  PLINE	thru_avg_line;	/* average throughput line */
+  PLINE	thru_inst_line;	/* instantaneous throughput line */
 
-    /* data transfer time stamps - mallman */
-    timeval	first_data_time;
-    timeval	last_data_time;
+  /* data transfer time stamps - mallman */
+  timeval	first_data_time;
+  timeval	last_data_time;
 
-    /* Time Sequence Graph info for this one */
-    PLOTTER	tsg_plotter;
-    char	*tsg_plotfile;
+  /* Time Sequence Graph info for this one */
+  PLOTTER	tsg_plotter;
+  char	*tsg_plotfile;
 
-    /* Time Line Graph */
-    PLOTTER     tline_plotter;
-   
-    /* Dumped RTT samples */
-    MFILE	*rtt_dump_file;
+  /* Time Line Graph */
+  PLOTTER     tline_plotter;
 
-    /* Extracted stream contents */
-    MFILE	*extr_contents_file;
-    u_llong	trunc_bytes;	/* data bytes not see due to trace file truncation */
-    u_llong	trunc_segs;	/* segments with trunc'd bytes */
-    seqnum	extr_lastseq;	/* last sequence number we stored */
-    seqnum	extr_initseq;	/* initial sequence number (same as SYN unless we missed it) */
+  /* Dumped RTT samples */
+  MFILE	*rtt_dump_file;
 
-    /* RTT Graph info for this one */
-    PLOTTER	rtt_plotter;
-    PLINE	rtt_line;
+  /* Extracted stream contents */
+  MFILE	*extr_contents_file;
+  u_llong	trunc_bytes;	/* data bytes not see due to trace file truncation */
+  u_llong	trunc_segs;	/* segments with trunc'd bytes */
+  seqnum	extr_lastseq;	/* last sequence number we stored */
+  seqnum	extr_initseq;	/* initial sequence number (same as SYN unless we missed it) */
 
-    /* Segment size graph */
-    PLOTTER	segsize_plotter;
-    PLINE	segsize_line;
-    PLINE	segsize_avg_line;
+  /* RTT Graph info for this one */
+  PLOTTER	rtt_plotter;
+  PLINE	rtt_line;
 
-    /* Congestion window graph */
-    PLOTTER	owin_plotter;
-    PLINE	owin_line;
-    PLINE       rwin_line;
-    PLINE	owin_avg_line;
-    PLINE 	owin_wavg_line;
+  /* Segment size graph */
+  PLOTTER	segsize_plotter;
+  PLINE	segsize_line;
+  PLINE	segsize_avg_line;
 
-    /* for tracking unidirectional idle time */
-    timeval	last_time;	/* last packet SENT from this side */
-    u_llong	idle_max;	/* maximum idle time observed (usecs) */
+  /* Congestion window graph */
+  PLOTTER	owin_plotter;
+  PLINE	owin_line;
+  PLINE       rwin_line;
+  PLINE	owin_avg_line;
+  PLINE 	owin_wavg_line;
 
-    /* for looking for interesting SACK blocks */
-    u_long	num_sacks;
-    u_long	max_sack_blocks;
-    u_long	num_dsacks;
+  /* for tracking unidirectional idle time */
+  timeval	last_time;	/* last packet SENT from this side */
+  u_llong	idle_max;	/* maximum idle time observed (usecs) */
 
-    /* for computing LEAST (see FAQ) */
-    enum	tcp_strains { TCP_RENO, TCP_SACK, TCP_DSACK } tcp_strain;
-    u_long	LEAST;
-    char	in_rto;
-    u_long	recovered, recovered_orig, rto_segment, lastackno;
-    u_long	event_retrans, event_dupacks;
+  /* for looking for interesting SACK blocks */
+  u_long	num_sacks;
+  u_long	max_sack_blocks;
+  u_long	num_dsacks;
 
-    /* host name letter(s) */
-    char	*host_letter;
+  /* for computing LEAST (see FAQ) */
+  enum	tcp_strains { TCP_RENO, TCP_SACK, TCP_DSACK } tcp_strain;
+  u_long	LEAST;
+  char	in_rto;
+  u_long	recovered, recovered_orig, rto_segment, lastackno;
+  u_long	event_retrans, event_dupacks;
+
+  /* host name letter(s) */
+  char	*host_letter;
 } tcb;
 
 
 typedef u_short hash;
 
 typedef struct {
-    ipaddr	a_address;
-    ipaddr	b_address;
-    portnum	a_port;
-    portnum	b_port;
-    hash	hash;
+  ipaddr	a_address;
+  ipaddr	b_address;
+  portnum	a_port;
+  portnum	b_port;
+  hash	hash;
 } tcp_pair_addrblock;
 
 
 struct stcp_pair {
-    /* are we ignoring this one?? */
-    Bool		ignore_pair;
+  /* are we ignoring this one?? */
+  Bool		ignore_pair;
 
-    /* inactive (previous instance of current connection */
-    Bool		inactive;
+  /* inactive (previous instance of current connection */
+  Bool		inactive;
 
-    /* endpoint identification */
-    tcp_pair_addrblock	addr_pair;
+  /* endpoint identification */
+  tcp_pair_addrblock	addr_pair;
 
-    /* connection naming information */
-    char		*a_hostname;
-    char		*b_hostname;
-    char		*a_portname;
-    char		*b_portname;
-    char		*a_endpoint;
-    char		*b_endpoint;
+  /* connection naming information */
+  char		*a_hostname;
+  char		*b_hostname;
+  char		*a_portname;
+  char		*b_portname;
+  char		*a_endpoint;
+  char		*b_endpoint;
 
-    /* connection information */
-    timeval		first_time;
-    timeval		last_time;
-    u_llong		packets;
-    tcb			a2b;
-    tcb			b2a;
+  /* connection information */
+  timeval		first_time;
+  timeval		last_time;
+  u_llong		packets;
+  tcb			a2b;
+  tcb			b2a;
 
 
-    /* module-specific structures, if requested */
-    void		**pmod_info;
+  /* module-specific structures, if requested */
+  void		**pmod_info;
 
-    /* which file this connection is from */
-    char		*filename;
+  /* which file this connection is from */
+  char		*filename;
 };
 typedef struct stcp_pair tcp_pair;
 
@@ -564,34 +564,34 @@ extern tcp_pair **ttp;		/* array of pointers to allocated pairs */
 
 /* Wed Aug 20, 2003 - Ramani*/
 /*  Prior to version 6.4.11, the data structure for storing the snapshots of 
- connections was a hashtable with linked lists. But this might lead to a 
- worst case scenario when many connections hash to the same hash table entry.
- In such a case, searching for the connections degrades to searching a linked 
- list with a worst case complexity of O(number of connections in list). Hence 
- the new version implements an AVL tree in place of linked list leading to a 
- worst case complexity of O(ln(number of connections in tree)). 
+    connections was a hashtable with linked lists. But this might lead to a 
+    worst case scenario when many connections hash to the same hash table entry.
+    In such a case, searching for the connections degrades to searching a linked 
+    list with a worst case complexity of O(number of connections in list). Hence 
+    the new version implements an AVL tree in place of linked list leading to a 
+    worst case complexity of O(ln(number of connections in tree)). 
     The modified data structure was tested with dumpfiles containing lots of 
- connections. A comparison of the profiles suggests an improvement in the time 
- spent in the dotrace function. Even though the AVL tree implementation 
- involves balancing the tree, since most of the accesses involve searching the 
- data structure, AVL tree performs MUCH better than linked list.
-     The algorithms for AVL tree implementation are based on those explained in
- "Data Structures and Program Design in C by Robert L.Kruse, Bruce P.Leung, 
- Clovis L.Tondo". The source code for AVL tree implementation is from the 
- Institute of Applied Iconoclasm who put up the source code at 
- <http://www.purists.org>. We thank Georg for the source code whose mail 
- address has been mentioned as <georg@purists.org> */
+    connections. A comparison of the profiles suggests an improvement in the time 
+    spent in the dotrace function. Even though the AVL tree implementation 
+    involves balancing the tree, since most of the accesses involve searching the 
+    data structure, AVL tree performs MUCH better than linked list.
+    The algorithms for AVL tree implementation are based on those explained in
+    "Data Structures and Program Design in C by Robert L.Kruse, Bruce P.Leung, 
+    Clovis L.Tondo". The source code for AVL tree implementation is from the 
+    Institute of Applied Iconoclasm who put up the source code at 
+    <http://www.purists.org>. We thank Georg for the source code whose mail 
+    address has been mentioned as <georg@purists.org> */
 
 /* Data structures for AVL tree */
 
 /* Which of a given node's subtrees is higher in the AVL tree */
 enum AVLSKEW {
-   EQUAL1, LEFT, RIGHT
+  EQUAL1, LEFT, RIGHT
 };
-                                                                                
+
 /* Did an insertion/deletion succeed and if we need to balance the AVL tree */
 enum AVLRES {
-   OK, BALANCE
+  OK, BALANCE
 };
 
 /* Tue Nov 17, 1998 */
@@ -605,10 +605,10 @@ enum AVLRES {
 /* hash table.  We only retrieve the connection record if the snapshot */
 /* matches. The result is that it works MUCH better when memory is low. */
 typedef struct ptp_snap {
-    enum AVLSKEW        skew;      /* Skew of the AVL tree node */
-    tcp_pair_addrblock	addr_pair; /* just a copy */
-    struct ptp_snap     *left, *right;  /* Left and right trees of the AVL node */
-    void		*ptp;
+  enum AVLSKEW        skew;      /* Skew of the AVL tree node */
+  tcp_pair_addrblock	addr_pair; /* just a copy */
+  struct ptp_snap     *left, *right;  /* Left and right trees of the AVL node */
+  void		*ptp;
 } ptp_snap;
 
 
@@ -624,57 +624,57 @@ typedef struct ptp_ptr {
 #define REMOVE_CLOSED_CONN_INTERVAL	8*60	/* 8 minutes */
 #define UPDATE_INTERVAL			30	/* 30 seconds */
 #define MAX_CONN_NUM			50000	/* max number of connections */
-						/* for continuous mode */
+/* for continuous mode */
 
 /* minimal support for UDP "connections" */
 typedef struct ucb {
-    /* parent pointer */
-    struct sudp_pair *pup;
-    struct ucb	*ptwin;
+  /* parent pointer */
+  struct sudp_pair *pup;
+  struct ucb	*ptwin;
 
-    /* statistics added */
-    u_llong	data_bytes;
-    u_llong	packets;
-    u_long	min_dg_size;
-    u_long	max_dg_size;
+  /* statistics added */
+  u_llong	data_bytes;
+  u_llong	packets;
+  u_long	min_dg_size;
+  u_long	max_dg_size;
 
-    /* host name letter(s) */
-    char	*host_letter;
+  /* host name letter(s) */
+  char	*host_letter;
 } ucb;
 
 
 
 typedef tcp_pair_addrblock udp_pair_addrblock;
 struct sudp_pair {
-    /* Are we ignoring this 'connection' ? */
-    Bool                ignore_pair;
-     
-    /* endpoint identification */
-    udp_pair_addrblock	addr_pair;
+  /* Are we ignoring this 'connection' ? */
+  Bool                ignore_pair;
 
-    /* connection naming information */
-    char		*a_hostname;
-    char		*b_hostname;
-    char		*a_portname;
-    char		*b_portname;
-    char		*a_endpoint;
-    char		*b_endpoint;
+  /* endpoint identification */
+  udp_pair_addrblock	addr_pair;
 
-    /* connection information */
-    timeval		first_time;
-    timeval		last_time;
-    u_llong		packets;
-    ucb			a2b;
-    ucb			b2a;
+  /* connection naming information */
+  char		*a_hostname;
+  char		*b_hostname;
+  char		*a_portname;
+  char		*b_portname;
+  char		*a_endpoint;
+  char		*b_endpoint;
 
-    /* module-specific structures, if requested */
-    void		**pmod_info;
+  /* connection information */
+  timeval		first_time;
+  timeval		last_time;
+  u_llong		packets;
+  ucb			a2b;
+  ucb			b2a;
 
-    /* which file this connection is from */
-    char		*filename;
+  /* module-specific structures, if requested */
+  void		**pmod_info;
 
-    /* linked list of usage */
-    struct sudp_pair *next;
+  /* which file this connection is from */
+  char		*filename;
+
+  /* linked list of usage */
+  struct sudp_pair *next;
 };
 typedef struct sudp_pair udp_pair;
 typedef struct udphdr udphdr;
@@ -850,7 +850,7 @@ char *HostLetter(llong);
 char *NextHostLetter(void);
 char *EndpointName(ipaddr,portnum);
 PLOTTER new_plotter(tcb *plast, char *filename, char *title,
-		    char *xlabel, char *ylabel, char *suffix);
+    char *xlabel, char *ylabel, char *suffix);
 int rexmit(tcb *, seqnum, seglen, Bool *);
 enum t_ack ack_in(tcb *, seqnum, unsigned tcp_data_length, u_long eff_win);
 Bool IsRTO(tcb *ptcb, seqnum s);
@@ -910,9 +910,9 @@ void freequad(quadrant **);
 enum AVLRES SnapInsert(ptp_snap **n, ptp_snap *new_node);
 enum AVLRES SnapRemove(ptp_snap **n, tcp_pair_addrblock address);
 int AVL_CheckHash(tcp_pair_addrblock *ptpa1,
-		  tcp_pair_addrblock *ptpa2, int *pdir);
+    tcp_pair_addrblock *ptpa2, int *pdir);
 int AVL_CheckDir(tcp_pair_addrblock *ptpa1, tcp_pair_addrblock *ptpa2);
-    
+
 /* high-level line drawing */
 PLINE new_line(PLOTTER pl, char *label, char *color);
 void extend_line(PLINE pline, timeval xval, int yval);
@@ -942,10 +942,10 @@ char *ExpandFormat(const char *format);
 #define FLAG7_SET(ptcp)((ptcp)->th_flags & 0x80)
 
 /* Changed the following macros to reflect the correct position
-of bits as specified in RFC 2481 and draft-ietf-tsvwg-ecn-04.txt */
+   of bits as specified in RFC 2481 and draft-ietf-tsvwg-ecn-04.txt */
 /*
-	#define CWR_SET(ptcp)     (TH_X2((ptcp)) & TH_CWR)
-	#define ECN_ECHO_SET(ptcp)(TH_X2((ptcp)) & TH_ECN_ECHO)
+#define CWR_SET(ptcp)     (TH_X2((ptcp)) & TH_CWR)
+#define ECN_ECHO_SET(ptcp)(TH_X2((ptcp)) & TH_ECN_ECHO)
 */
 
 #define CWR_SET(ptcp)	(TH_FLAGS((ptcp)) & TH_CWR)
@@ -996,14 +996,14 @@ of bits as specified in RFC 2481 and draft-ietf-tsvwg-ecn-04.txt */
 #define	TCPOPT_SACK      5	/* sack attached option */
 #define	MAX_SACKS       10	/* max number of sacks per segment (rfc1072) */
 typedef struct sack_block {
-    seqnum	sack_left;	/* left edge */
-    seqnum	sack_right;	/* right edge */
+  seqnum	sack_left;	/* left edge */
+  seqnum	sack_right;	/* right edge */
 } sack_block;
 
 #define MAX_UNKNOWN 16
 typedef struct opt_unknown {
-    u_char	unkn_opt;
-    u_char	unkn_len;
+  u_char	unkn_opt;
+  u_char	unkn_len;
 } opt_unknown;
 
 /* RFC 1323 TCP options (not usually in tcp.h yet) */
@@ -1032,7 +1032,7 @@ typedef struct opt_unknown {
 /*#define TH_CWR		0x01 */	/* Congestion Window Reduced */
 
 #define TH_CWR 0x80			/* Used by sender to indicate congestion
-							   window size reduction. */
+                           window size reduction. */
 #define TH_ECN_ECHO 0x40	/* Used by receiver to echo CE bit. */
 
 
@@ -1043,29 +1043,29 @@ typedef struct opt_unknown {
 typedef signed char s_char;
 
 struct tcp_options {
-    short	mss;		/* maximum segment size 	*/
-    s_char	ws;		/* window scale (1323) 		*/
-    long	tsval;		/* Time Stamp Val (1323)	*/
-    long	tsecr;		/* Time Stamp Echo Reply (1323)	*/
+  short	mss;		/* maximum segment size 	*/
+  s_char	ws;		/* window scale (1323) 		*/
+  long	tsval;		/* Time Stamp Val (1323)	*/
+  long	tsecr;		/* Time Stamp Echo Reply (1323)	*/
 
-    Bool	sack_req;	/* sacks requested 		*/
-    s_char	sack_count;	/* sack count in this packet */
-    sack_block	sacks[MAX_SACKS]; /* sack blocks */
+  Bool	sack_req;	/* sacks requested 		*/
+  s_char	sack_count;	/* sack count in this packet */
+  sack_block	sacks[MAX_SACKS]; /* sack blocks */
 
-    /* echo request and reply */
-    /* assume that value of -1 means unused  (?) */
-    u_long	echo_req;
-    u_long	echo_repl;
+  /* echo request and reply */
+  /* assume that value of -1 means unused  (?) */
+  u_long	echo_req;
+  u_long	echo_repl;
 
-    /* T/TCP stuff */
-    /* assume that value of -1 means unused  (?) */
-    u_long	cc;
-    u_long	ccnew;
-    u_long	ccecho;
+  /* T/TCP stuff */
+  /* assume that value of -1 means unused  (?) */
+  u_long	cc;
+  u_long	ccnew;
+  u_long	ccecho;
 
-    /* record the stuff we don't understand, too */
-    char	unknown_count;	/* number of unknown options */
-    opt_unknown	unknowns[MAX_UNKNOWN]; /* unknown options */
+  /* record the stuff we don't understand, too */
+  char	unknown_count;	/* number of unknown options */
+  opt_unknown	unknowns[MAX_UNKNOWN]; /* unknown options */
 };
 
 
@@ -1095,32 +1095,32 @@ struct tcp_options {
 /* packet-reading options... */
 /* the type for a packet reading routine */
 typedef int pread_f(struct timeval *, int *, int *, void **,
-		   int *, struct ip **, void **);
+    int *, struct ip **, void **);
 
 /* give the prototypes for the is_GLORP() routines supported */
 #ifdef GROK_SNOOP
-	pread_f *is_snoop(char *);
+pread_f *is_snoop(char *);
 #endif /* GROK_SNOOP */
 #ifdef GROK_NETM
-	pread_f *is_netm(char *);
+pread_f *is_netm(char *);
 #endif /* GROK_NETM */
 #ifdef GROK_TCPDUMP
-	pread_f *is_tcpdump(char *);
+pread_f *is_tcpdump(char *);
 #endif /* GROK_TCPDUMP */
 #ifdef GROK_ETHERPEEK
-	pread_f *is_EP(char *);
+pread_f *is_EP(char *);
 #endif /* GROK_ETHERPEEK */
 #ifdef GROK_NS
- 	pread_f *is_ns(char *);
+pread_f *is_ns(char *);
 #endif /* GROK_NS */
 #ifdef GROK_NLANR
-	pread_f *is_nlanr(char *);
+pread_f *is_nlanr(char *);
 #endif /* GROK_NLANR */
 #ifdef GROK_NETSCOUT
-	pread_f *is_netscout(char *);
+pread_f *is_netscout(char *);
 #endif /* GROK_NETSCOUT */
 #ifdef GROK_ERF
-	pread_f *is_erf(char *);
+pread_f *is_erf(char *);
 #endif /* GROK_ERF */
 
 #ifndef __VMS
@@ -1158,7 +1158,7 @@ int snprintf_vms(char *str, size_t len, const char *fmt, ...);
 #define PIP_V6(pip) ((struct ipv6 *)(pip))
 #define PIP_V4(pip) ((struct ip *)(pip))
 #define PIP_EITHERFIELD(pip,fld4,fld6) \
-   (PIP_ISV4(pip)?(PIP_V4(pip)->fld4):(PIP_V6(pip)->fld6))
+  (PIP_ISV4(pip)?(PIP_V4(pip)->fld4):(PIP_V6(pip)->fld6))
 #define PIP_LEN(pip) (PIP_EITHERFIELD(pip,ip_len,ip6_lngth))
 
 /*

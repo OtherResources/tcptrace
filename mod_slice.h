@@ -53,7 +53,7 @@
  *		http://www.tcptrace.org/
  */
 static char const GCC_UNUSED rcsid_slice[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/mod_slice.h,v 1.3 2003/11/19 14:38:07 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/mod_slice.h,v 1.3 2003/11/19 14:38:07 sdo Exp $";
 
 
 /* header file for slice.c */

@@ -54,106 +54,106 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED copyright[] =
-    "@(#)Copyright (c) 2004 -- Ohio University.\n";
+"@(#)Copyright (c) 2004 -- Ohio University.\n";
 static char const GCC_UNUSED rcsid[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/thruput.c,v 5.5 2003/11/19 14:38:05 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/thruput.c,v 5.5 2003/11/19 14:38:05 sdo Exp $";
 
 
 
 
-void
+  void
 DoThru(
     tcb *ptcb,
     int nbytes)
 {
-    double etime;
-    double thruput;
-    char *myname, *hisname;
+  double etime;
+  double thruput;
+  char *myname, *hisname;
 
-    /* init, if not already done */
-    if (ZERO_TIME(&ptcb->thru_firsttime)) {
-	char title[210];
+  /* init, if not already done */
+  if (ZERO_TIME(&ptcb->thru_firsttime)) {
+    char title[210];
 
-	ptcb->thru_firsttime = current_time;
-	ptcb->thru_lasttime = current_time;
-	ptcb->thru_pkts = 1;
-	ptcb->thru_bytes = nbytes;
-	
-
-	/* bug fix from Michele Clark - UNC */
-	if (&ptcb->ptp->a2b == ptcb) {
-	    myname = ptcb->ptp->a_endpoint;
-	    hisname = ptcb->ptp->b_endpoint;
-	} else {
-	    myname = ptcb->ptp->b_endpoint;
-	    hisname = ptcb->ptp->a_endpoint;
-	}
-	/* create the plotter file */
-	snprintf(title,sizeof(title),"%s_==>_%s (throughput)",
-		myname, hisname);
-	ptcb->thru_plotter = new_plotter(ptcb,NULL,title,
-					 "time","thruput (bytes/sec)",
-					 THROUGHPUT_FILE_EXTENSION);
-	if (graph_time_zero) {
-	    /* set graph zero points */
-	    plotter_nothing(ptcb->thru_plotter, current_time);
-	}
-
-	/* create lines for average and instantaneous values */
-	ptcb->thru_avg_line =
-	    new_line(ptcb->thru_plotter, "avg. tput", "blue");
-	ptcb->thru_inst_line =
-	    new_line(ptcb->thru_plotter, "inst. tput", "red");
-
-	return;
-    }
-
-    /* if no data, then nothing to do */
-    if (nbytes == 0)
-	return;
-
-    /* see if we should output the stats yet */
-    if (ptcb->thru_pkts+1 >= thru_interval) {
-
-	/* compute stats for this interval */
-	etime = elapsed(ptcb->thru_firsttime,current_time);
-	if (etime == 0.0)
-	    etime = 1000;	/* ick, what if "no time" has passed?? */
-	thruput = (double) ptcb->thru_bytes / ((double) etime / 1000000.0);
-
-	/* instantaneous plot */
-	extend_line(ptcb->thru_inst_line,
-		     current_time, (int) thruput);
-
-	/* compute stats for connection lifetime */
-	etime = elapsed(ptcb->ptp->first_time,current_time);
-	if (etime == 0.0)
-	    etime = 1000;	/* ick, what if "no time" has passed?? */
-	thruput = (double) ptcb->data_bytes / ((double) etime / 1000000.0);
-
-	/* long-term average */
-	extend_line(ptcb->thru_avg_line,
-		     current_time, (int) thruput);
-
-	/* reset stats for this interval */
-	ptcb->thru_firsttime = current_time;
-	ptcb->thru_pkts = 0;
-	ptcb->thru_bytes = 0;
-    }
-
-    /* immediate value in yellow ticks */
-    if (plot_tput_instant) {
-	etime = elapsed(ptcb->thru_lasttime,current_time);
-	if (etime == 0.0)
-	    etime = 1000;	/* ick, what if "no time" has passed?? */
-	thruput = (double) nbytes / ((double) etime / 1000000.0);
-	plotter_temp_color(ptcb->thru_plotter,"yellow");
-	plotter_dot(ptcb->thru_plotter,
-		    current_time, (int) thruput);
-    }
-
-    /* add in the latest packet */
+    ptcb->thru_firsttime = current_time;
     ptcb->thru_lasttime = current_time;
-    ++ptcb->thru_pkts;
-    ptcb->thru_bytes += nbytes;
+    ptcb->thru_pkts = 1;
+    ptcb->thru_bytes = nbytes;
+
+
+    /* bug fix from Michele Clark - UNC */
+    if (&ptcb->ptp->a2b == ptcb) {
+      myname = ptcb->ptp->a_endpoint;
+      hisname = ptcb->ptp->b_endpoint;
+    } else {
+      myname = ptcb->ptp->b_endpoint;
+      hisname = ptcb->ptp->a_endpoint;
+    }
+    /* create the plotter file */
+    snprintf(title,sizeof(title),"%s_==>_%s (throughput)",
+        myname, hisname);
+    ptcb->thru_plotter = new_plotter(ptcb,NULL,title,
+        "time","thruput (bytes/sec)",
+        THROUGHPUT_FILE_EXTENSION);
+    if (graph_time_zero) {
+      /* set graph zero points */
+      plotter_nothing(ptcb->thru_plotter, current_time);
+    }
+
+    /* create lines for average and instantaneous values */
+    ptcb->thru_avg_line =
+      new_line(ptcb->thru_plotter, "avg. tput", "blue");
+    ptcb->thru_inst_line =
+      new_line(ptcb->thru_plotter, "inst. tput", "red");
+
+    return;
+  }
+
+  /* if no data, then nothing to do */
+  if (nbytes == 0)
+    return;
+
+  /* see if we should output the stats yet */
+  if (ptcb->thru_pkts+1 >= thru_interval) {
+
+    /* compute stats for this interval */
+    etime = elapsed(ptcb->thru_firsttime,current_time);
+    if (etime == 0.0)
+      etime = 1000;	/* ick, what if "no time" has passed?? */
+    thruput = (double) ptcb->thru_bytes / ((double) etime / 1000000.0);
+
+    /* instantaneous plot */
+    extend_line(ptcb->thru_inst_line,
+        current_time, (int) thruput);
+
+    /* compute stats for connection lifetime */
+    etime = elapsed(ptcb->ptp->first_time,current_time);
+    if (etime == 0.0)
+      etime = 1000;	/* ick, what if "no time" has passed?? */
+    thruput = (double) ptcb->data_bytes / ((double) etime / 1000000.0);
+
+    /* long-term average */
+    extend_line(ptcb->thru_avg_line,
+        current_time, (int) thruput);
+
+    /* reset stats for this interval */
+    ptcb->thru_firsttime = current_time;
+    ptcb->thru_pkts = 0;
+    ptcb->thru_bytes = 0;
+  }
+
+  /* immediate value in yellow ticks */
+  if (plot_tput_instant) {
+    etime = elapsed(ptcb->thru_lasttime,current_time);
+    if (etime == 0.0)
+      etime = 1000;	/* ick, what if "no time" has passed?? */
+    thruput = (double) nbytes / ((double) etime / 1000000.0);
+    plotter_temp_color(ptcb->thru_plotter,"yellow");
+    plotter_dot(ptcb->thru_plotter,
+        current_time, (int) thruput);
+  }
+
+  /* add in the latest packet */
+  ptcb->thru_lasttime = current_time;
+  ++ptcb->thru_pkts;
+  ptcb->thru_bytes += nbytes;
 }

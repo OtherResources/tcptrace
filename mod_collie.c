@@ -54,7 +54,7 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED rcsid[] =
-   "$Header: /usr/local/cvs/tcptrace/mod_collie.c,v 5.7 2003/11/19 14:38:02 sdo Exp $";
+"$Header: /usr/local/cvs/tcptrace/mod_collie.c,v 5.7 2003/11/19 14:38:02 sdo Exp $";
 
 #ifdef LOAD_MODULE_COLLIE
 
@@ -67,16 +67,16 @@ static char const GCC_UNUSED rcsid[] =
 
 /* additional info kept per connection */
 struct conn_info {
-    tcp_pair *ptp;
-    struct conn_info *next;
+  tcp_pair *ptp;
+  struct conn_info *next;
 };
 static struct conn_info *connhead = NULL;
 
 
 /* additional info kept per UDP pair */
 struct uconn_info {
-    udp_pair *pup;
-    struct uconn_info *next;
+  udp_pair *pup;
+  struct uconn_info *next;
 };
 static struct uconn_info *uconnhead = NULL;
 
@@ -98,213 +98,213 @@ static void ParseArgs(char *argstring);
 
 
 /* Set it up */
-int
+  int
 collie_init(
     int argc,
     char *argv[])
 {
-    int i;
-    int enable=0;
-    char *args = NULL;
+  int i;
+  int enable=0;
+  char *args = NULL;
 
-    for (i=1; i < argc; ++i) {
-	if (!argv[i])
-	    continue;  /* argument already taken by another module... */
-	if (strncmp(argv[i],"-x",2) == 0) {
-	    if (strncasecmp(argv[i]+2,"collie",sizeof("collie")-1) == 0) {
-		/* I want to be called */
-		args = argv[i]+(sizeof("-xcollie")-1);
-		enable = 1;
-		argv[i] = NULL;
-	    }
-	}
+  for (i=1; i < argc; ++i) {
+    if (!argv[i])
+      continue;  /* argument already taken by another module... */
+    if (strncmp(argv[i],"-x",2) == 0) {
+      if (strncasecmp(argv[i]+2,"collie",sizeof("collie")-1) == 0) {
+        /* I want to be called */
+        args = argv[i]+(sizeof("-xcollie")-1);
+        enable = 1;
+        argv[i] = NULL;
+      }
     }
+  }
 
-    if (!enable)
-	return(0);	/* don't call me again */
+  if (!enable)
+    return(0);	/* don't call me again */
 
-    /* parse any arguments for ME */
-    ParseArgs(args);
+  /* parse any arguments for ME */
+  ParseArgs(args);
 
-    /* we don't want the normal output */
-    printsuppress = TRUE;
+  /* we don't want the normal output */
+  printsuppress = TRUE;
 
-    /* please also include UDP packets */
-    do_udp = TRUE;
+  /* please also include UDP packets */
+  do_udp = TRUE;
 
-    return(1);	/* TRUE means call collie_read and collie_done later */
+  return(1);	/* TRUE means call collie_read and collie_done later */
 }
 
 
 
-static struct conn_info *
+  static struct conn_info *
 MakeConnRec(void)
 {
-    struct conn_info *pci;
+  struct conn_info *pci;
 
-    pci = MallocZ(sizeof(struct conn_info));
+  pci = MallocZ(sizeof(struct conn_info));
 
-    /* chain it in (at head of list) */
-    pci->next = connhead;
-    connhead = pci;
+  /* chain it in (at head of list) */
+  pci->next = connhead;
+  connhead = pci;
 
-    return(pci);
+  return(pci);
 }
 
 
-static struct uconn_info *
+  static struct uconn_info *
 MakeUDPConnRec(void)
 {
-    struct uconn_info *puci;
+  struct uconn_info *puci;
 
-    puci = MallocZ(sizeof(struct uconn_info));
+  puci = MallocZ(sizeof(struct uconn_info));
 
-    /* chain it in (at head of list) */
-    puci->next = uconnhead;
-    uconnhead = puci;
+  /* chain it in (at head of list) */
+  puci->next = uconnhead;
+  uconnhead = puci;
 
-    return(puci);
+  return(puci);
 }
 
 
 #define LABEL(str)(print_labels?str:"")
 
 #define DESCR(ptr)\
-	printf("\n"); \
-	printf("%s%s \n",\
-	       LABEL("Session Start: "),\
-	       collie_time(&(ptr)->first_time));\
-	printf("%s%s\n",\
-	       LABEL("Session End: "),\
-	       collie_time(&(ptr)->last_time));\
-	printf("%s%s\n",\
-	       LABEL("Source IP address: "),\
-	       collie_dots((ptr)->addr_pair.a_address));\
-	printf("%s%u\n",\
-	       LABEL("Source Port: "),\
-	       (unsigned)(ptr)->addr_pair.a_port);\
-	printf("%s%s\n",\
-	       LABEL("Source Fully Qualified domain name: "),\
-	       collie_name((ptr)->addr_pair.a_address));\
-	printf("%s%s\n",\
-	       LABEL("Destination IP address: "),\
-	       collie_dots((ptr)->addr_pair.b_address));\
-	printf("%s%u\n",\
-	       LABEL("Destination Port: "),\
-	       (unsigned)(ptr)->addr_pair.b_port);\
-	printf("%s%s\n",\
-	       LABEL("Destination Fully Qualified domain name: "),\
-	       collie_name((ptr)->addr_pair.b_address));\
-	printf("%s%" FS_ULL "\n",\
-	       LABEL("Bytes Transferred Source to Destination: "),\
-	       (ptr)->a2b.data_bytes);\
-	printf("%s%" FS_ULL "\n",\
-	       LABEL("Bytes Transferred Destination to Source: "),\
-	       (ptr)->b2a.data_bytes);\
-	printf("%s%" FS_ULL "\n",\
-	       LABEL("Packets Transferred Source to Destination: "),\
-	       (ptr)->a2b.packets);\
-	printf("%s%" FS_ULL "\n",\
-	       LABEL("Packets Transferred Destination to Source: "),\
-	       (ptr)->b2a.packets);
+  printf("\n"); \
+printf("%s%s \n",\
+    LABEL("Session Start: "),\
+    collie_time(&(ptr)->first_time));\
+printf("%s%s\n",\
+    LABEL("Session End: "),\
+    collie_time(&(ptr)->last_time));\
+printf("%s%s\n",\
+    LABEL("Source IP address: "),\
+    collie_dots((ptr)->addr_pair.a_address));\
+printf("%s%u\n",\
+    LABEL("Source Port: "),\
+    (unsigned)(ptr)->addr_pair.a_port);\
+printf("%s%s\n",\
+    LABEL("Source Fully Qualified domain name: "),\
+    collie_name((ptr)->addr_pair.a_address));\
+printf("%s%s\n",\
+    LABEL("Destination IP address: "),\
+    collie_dots((ptr)->addr_pair.b_address));\
+printf("%s%u\n",\
+    LABEL("Destination Port: "),\
+    (unsigned)(ptr)->addr_pair.b_port);\
+printf("%s%s\n",\
+    LABEL("Destination Fully Qualified domain name: "),\
+    collie_name((ptr)->addr_pair.b_address));\
+printf("%s%" FS_ULL "\n",\
+    LABEL("Bytes Transferred Source to Destination: "),\
+    (ptr)->a2b.data_bytes);\
+printf("%s%" FS_ULL "\n",\
+    LABEL("Bytes Transferred Destination to Source: "),\
+    (ptr)->b2a.data_bytes);\
+printf("%s%" FS_ULL "\n",\
+    LABEL("Packets Transferred Source to Destination: "),\
+    (ptr)->a2b.packets);\
+printf("%s%" FS_ULL "\n",\
+    LABEL("Packets Transferred Destination to Source: "),\
+    (ptr)->b2a.packets);
 
 
-void	
+  void	
 collie_done(void)
 {
-    struct conn_info *pci;
-    struct uconn_info *upci;
-    struct stat statbuf;
+  struct conn_info *pci;
+  struct uconn_info *upci;
+  struct stat statbuf;
 
-    /* check the input file timestamp */
-    if (stat(collie_filename,&statbuf) != 0) {
-	perror(collie_filename);
-	exit(-1);
-    }
-    
-    /* print meta information */
-    printf("\n");
-    printf("%s%s\n",
-	   LABEL("Source file: "),
-	   collie_filename);
-    printf("%s%s\n",
-	   LABEL("File modification timestamp: "),
-	   collie_date(statbuf.st_mtime));
-    printf("%s%s\n",
-	   LABEL("First packet: "),
-	   collie_time(&first_packet));
-    printf("%s%s\n",
-	   LABEL("Last packet: "),
-	   collie_time(&last_packet));
+  /* check the input file timestamp */
+  if (stat(collie_filename,&statbuf) != 0) {
+    perror(collie_filename);
+    exit(-1);
+  }
 
-    /* print out the TCP connections */
-    if (print_labels)
-	printf("\nTCP Connections\n");
-    for (pci=connhead; pci; pci=pci->next) {
-	DESCR(pci->ptp)
-	    }
+  /* print meta information */
+  printf("\n");
+  printf("%s%s\n",
+      LABEL("Source file: "),
+      collie_filename);
+  printf("%s%s\n",
+      LABEL("File modification timestamp: "),
+      collie_date(statbuf.st_mtime));
+  printf("%s%s\n",
+      LABEL("First packet: "),
+      collie_time(&first_packet));
+  printf("%s%s\n",
+      LABEL("Last packet: "),
+      collie_time(&last_packet));
 
-    /* print out the UDP connections */
-    if (print_labels)
-	printf("\nUDP Connections\n");
-    for (upci=uconnhead; upci; upci=upci->next) {
-	DESCR(upci->pup)
-	    }
+  /* print out the TCP connections */
+  if (print_labels)
+    printf("\nTCP Connections\n");
+  for (pci=connhead; pci; pci=pci->next) {
+    DESCR(pci->ptp)
+  }
+
+  /* print out the UDP connections */
+  if (print_labels)
+    printf("\nUDP Connections\n");
+  for (upci=uconnhead; upci; upci=upci->next) {
+    DESCR(upci->pup)
+  }
 }
 
 
 /* called for each new file */
-void
+  void
 collie_newfile(
     char *newfile,
     u_long filesize,
     Bool fcompressed)
 {
-    if (collie_filename == NULL)
-	collie_filename = strdup(newfile);
-    else {
-	fprintf(stderr,"\n\n\
-Sorry, as the problem was defined, only a single file can be\n\
-processed at a time\n");
-	exit(-1);
-    }
+  if (collie_filename == NULL)
+    collie_filename = strdup(newfile);
+  else {
+    fprintf(stderr,"\n\n\
+        Sorry, as the problem was defined, only a single file can be\n\
+        processed at a time\n");
+    exit(-1);
+  }
 }
 
 
-void
+  void
 collie_usage(void)
 {
-    printf("\t-xcollie\"[-ln]\tprovide connection summary\n");
-    printf("\t   -l	attach labels\n");
-    printf("\t   -n	no labels please\n");
+  printf("\t-xcollie\"[-ln]\tprovide connection summary\n");
+  printf("\t   -l	attach labels\n");
+  printf("\t   -n	no labels please\n");
 }
 
 
-void *
+  void *
 collie_newconn(
     tcp_pair *ptp)
 {
-    struct conn_info *pci;
+  struct conn_info *pci;
 
-    pci = MakeConnRec();
+  pci = MakeConnRec();
 
-    pci->ptp = ptp;
-    
-    return(pci);
+  pci->ptp = ptp;
+
+  return(pci);
 }
 
 
-void *
+  void *
 collie_newudpconn(
     udp_pair *pup)
 {
-    struct uconn_info *puci;
+  struct uconn_info *puci;
 
-    puci = MakeUDPConnRec();
+  puci = MakeUDPConnRec();
 
-    puci->pup = pup;
-    
-    return(puci);
+  puci->pup = pup;
+
+  return(puci);
 }
 
 
@@ -312,14 +312,14 @@ collie_newudpconn(
 static char *collie_dots(
     ipaddr ipaddress)
 {
-    char *pch;
-    int map = resolve_ipaddresses;
+  char *pch;
+  int map = resolve_ipaddresses;
 
-    resolve_ipaddresses = 0;
-    pch = HostName(ipaddress);
-    resolve_ipaddresses = map;
+  resolve_ipaddresses = 0;
+  pch = HostName(ipaddress);
+  resolve_ipaddresses = map;
 
-    return(pch);
+  return(pch);
 }
 
 
@@ -327,14 +327,14 @@ static char *collie_dots(
 static char *collie_name(
     ipaddr ipaddress)
 {
-    char *pch;
-    int map = resolve_ipaddresses;
+  char *pch;
+  int map = resolve_ipaddresses;
 
-    resolve_ipaddresses = 1;
-    pch = HostName(ipaddress);
-    resolve_ipaddresses = map;
+  resolve_ipaddresses = 1;
+  pch = HostName(ipaddress);
+  resolve_ipaddresses = map;
 
-    return(pch);
+  return(pch);
 }
 
 
@@ -343,20 +343,20 @@ static char *collie_name(
 /* Unix format: "Fri Sep 13 00:00:00 1986\n" */
 /*		           1         2	     */
 /*		 012345678901234567890123456 */
-static char *
+  static char *
 collie_date(
     time_t timestamp)
 {
-	struct tm *ptm;
-	char *now;
+  struct tm *ptm;
+  char *now;
 
-	ptm = localtime(&timestamp);
-	now = asctime(ptm);
+  ptm = localtime(&timestamp);
+  now = asctime(ptm);
 
-	/* nuke the newline */
-	now[24] = '\00';
+  /* nuke the newline */
+  now[24] = '\00';
 
-	return(now);
+  return(now);
 }
 
 
@@ -364,47 +364,47 @@ collie_date(
 /* Unix format: "Fri Sep 13 00:00:00 1986\n" */
 /*		           1         2	     */
 /*		 012345678901234567890123456 */
-static char *
+  static char *
 collie_time(
     struct timeval *ptime)
 {
-	char *now;
+  char *now;
 
-	now = ts2ascii(ptime);
+  now = ts2ascii(ptime);
 
-	return(now);
+  return(now);
 }
 
-static void
+  static void
 ParseArgs(char *argstring)
 {
-    int argc;
-    char **argv;
-    int i;
-    
-    /* make sure there ARE arguments */
-    if (!(argstring && *argstring))
-	return;
+  int argc;
+  char **argv;
+  int i;
 
-    /* break the string into normal arguments */
-    StringToArgv(argstring,&argc,&argv);
+  /* make sure there ARE arguments */
+  if (!(argstring && *argstring))
+    return;
 
-    /* check the module args */
-    for (i=1; i < argc; ++i) {
-	if (debug > 1)
-	    printf("Checking argv[%d]:%s\n", i, argv[i]);
-	if (strcmp(argv[i],"-d") == 0) {
-	    debug = 1;
-	} else if (strcmp(argv[i],"-l") == 0) {
-	    print_labels = TRUE;
-	} else if (strcmp(argv[i],"-n") == 0) {
-	    print_labels = FALSE;
-	} else {
-	    fprintf(stderr,"Collie module: bad argument '%s'\n",
-		    argv[i]);
-	    exit(-1);
-	}
+  /* break the string into normal arguments */
+  StringToArgv(argstring,&argc,&argv);
+
+  /* check the module args */
+  for (i=1; i < argc; ++i) {
+    if (debug > 1)
+      printf("Checking argv[%d]:%s\n", i, argv[i]);
+    if (strcmp(argv[i],"-d") == 0) {
+      debug = 1;
+    } else if (strcmp(argv[i],"-l") == 0) {
+      print_labels = TRUE;
+    } else if (strcmp(argv[i],"-n") == 0) {
+      print_labels = FALSE;
+    } else {
+      fprintf(stderr,"Collie module: bad argument '%s'\n",
+          argv[i]);
+      exit(-1);
     }
+  }
 }
 
 

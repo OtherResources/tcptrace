@@ -53,124 +53,124 @@
  *		http://www.tcptrace.org/
  */
 static char const GCC_UNUSED rcsid_filter[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/filter.h,v 5.8 2003/11/19 14:38:06 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/filter.h,v 5.8 2003/11/19 14:38:06 sdo Exp $";
 
 
 /* all of the variable types that we understand */
 enum vartype {
-    V_ULONG	= 1,
-    V_LONG	= 2,
-    V_UINT	= 3,
-    V_INT	= 4,
-    V_USHORT	= 5,
-    V_SHORT	= 6,
-    V_UCHAR	= 7,
-    V_CHAR	= 8,
-    V_BOOL	= 9,
-    V_STRING	= 10,
-    V_ULLONG	= 11,
-    V_LLONG	= 12,
-    V_IPADDR	= 13,
+  V_ULONG	= 1,
+  V_LONG	= 2,
+  V_UINT	= 3,
+  V_INT	= 4,
+  V_USHORT	= 5,
+  V_SHORT	= 6,
+  V_UCHAR	= 7,
+  V_CHAR	= 8,
+  V_BOOL	= 9,
+  V_STRING	= 10,
+  V_ULLONG	= 11,
+  V_LLONG	= 12,
+  V_IPADDR	= 13,
 
-    /* functions */
-    V_FUNC	=14,		/* function returning unsigned */
-    V_UFUNC	=15		/* function returning signed */
+  /* functions */
+  V_FUNC	=14,		/* function returning unsigned */
+  V_UFUNC	=15		/* function returning signed */
 };
 
 
 
 /* all of the operations that we understand */
 enum optype {
-    /* just a constant */
-    OP_CONSTANT	  = 101,
+  /* just a constant */
+  OP_CONSTANT	  = 101,
 
-    /* a variable */
-    OP_VARIABLE	  = 102,
+  /* a variable */
+  OP_VARIABLE	  = 102,
 
-    /* BINARY OPs */
-    OP_AND	  = 103,
-    OP_OR	  = 104,
-    OP_EQUAL	  = 105,
-    OP_NEQUAL	  = 106,
-    OP_GREATER	  = 107,
-    OP_GREATER_EQ = 108,
-    OP_LESS	  = 109,
-    OP_LESS_EQ	  = 110,
+  /* BINARY OPs */
+  OP_AND	  = 103,
+  OP_OR	  = 104,
+  OP_EQUAL	  = 105,
+  OP_NEQUAL	  = 106,
+  OP_GREATER	  = 107,
+  OP_GREATER_EQ = 108,
+  OP_LESS	  = 109,
+  OP_LESS_EQ	  = 110,
 
-    /* Unary OPs */
-    OP_NOT	  = 111,
-    OP_SIGNED	  = 112,	/* convert unsigned to signed */
+  /* Unary OPs */
+  OP_NOT	  = 111,
+  OP_SIGNED	  = 112,	/* convert unsigned to signed */
 
-    /* binary arithmetic */
-    OP_PLUS	  = 113,
-    OP_MINUS	  = 114,
-    OP_TIMES	  = 115,
-    OP_DIVIDE	  = 116,
-    OP_MOD	  = 117,
+  /* binary arithmetic */
+  OP_PLUS	  = 113,
+  OP_MINUS	  = 114,
+  OP_TIMES	  = 115,
+  OP_DIVIDE	  = 116,
+  OP_MOD	  = 117,
 
-    /* bitwise arithmetic */
-    OP_BAND	  = 118,
-    OP_BOR	  = 119
+  /* bitwise arithmetic */
+  OP_BAND	  = 118,
+  OP_BOR	  = 119
 };
 
 
 /* Constant -- just a big union based on the type */
 union Constant {
-    u_llong	u_longint;
-    llong	longint;
-    Bool	bool;
-    char	*string;
-    ipaddr	*pipaddr;
+  u_llong	u_longint;
+  llong	longint;
+  Bool	bool;
+  char	*string;
+  ipaddr	*pipaddr;
 };
 
 /* Variable - keep the name and offset within a tcp_pair */
 struct Variable {
-    char 	*name;
-    u_long 	offset;
-    Bool	fclient;	/* from the client or server side? */
-    enum vartype realtype;
+  char 	*name;
+  u_long 	offset;
+  Bool	fclient;	/* from the client or server side? */
+  enum vartype realtype;
 };
 
 /* Binary - binary operation */
 struct Binary {
-    struct filter_node *left;
-    struct filter_node *right;
+  struct filter_node *left;
+  struct filter_node *right;
 };
 
 /* Unary - unary operations */
 struct Unary {
-    struct filter_node *pf;
+  struct filter_node *pf;
 };
 
 
 struct filter_node {
-    enum optype op;		/* node type */
-    enum vartype vartype;	/* type of the result */
-    union {
-	struct Unary unary;
-	struct Binary binary;
-	struct Variable variable;
-	union Constant constant;
-    } un;
-    Bool conjunction;
-    struct filter_node *next_var; /* for wildcard variable matches */
+  enum optype op;		/* node type */
+  enum vartype vartype;	/* type of the result */
+  union {
+    struct Unary unary;
+    struct Binary binary;
+    struct Variable variable;
+    union Constant constant;
+  } un;
+  Bool conjunction;
+  struct filter_node *next_var; /* for wildcard variable matches */
 };
 
 
 /* the result of executing a filter node */
 struct filter_res {
-    enum vartype vartype;
-    union Constant val;
+  enum vartype vartype;
+  union Constant val;
 };
 
 
 /* just a big table of things that we can filter on */
 struct filter_line {
-    char	*varname;	/* name of the variable to match */
-    enum vartype vartype;	/* type of the variable */
-    void 	*cl_addr;	/* address when in client */
-    void 	*sv_addr;	/* address when in server */
-    char	*descr;		/* brief description */
+  char	*varname;	/* name of the variable to match */
+  enum vartype vartype;	/* type of the variable */
+  void 	*cl_addr;	/* address when in client */
+  void 	*sv_addr;	/* address when in server */
+  char	*descr;		/* brief description */
 };
 
 

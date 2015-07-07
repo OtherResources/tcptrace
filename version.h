@@ -53,7 +53,7 @@
  *		http://www.tcptrace.org/
  */
 static char const GCC_UNUSED rcsid_version[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/version.h,v 5.67 2003/11/19 14:43:17 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/version.h,v 5.67 2003/11/19 14:43:17 sdo Exp $";
 
 
 /* source code version information */

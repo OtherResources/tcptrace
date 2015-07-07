@@ -52,7 +52,7 @@
  *		http://www.tcptrace.org/
  */
 static char const GCC_UNUSED rcsid_realtime[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/mod_realtime.h,v 5.4 2003/11/19 14:38:07 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/mod_realtime.h,v 5.4 2003/11/19 14:38:07 sdo Exp $";
 
 /* header file for mod_realtime.c */
 int realtime_init(int argc, char *argv[]);

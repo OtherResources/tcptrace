@@ -54,9 +54,9 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED copyright[] =
-    "@(#)Copyright (c) 2004 -- Ohio University.\n";
+"@(#)Copyright (c) 2004 -- Ohio University.\n";
 static char const GCC_UNUSED rcsid[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/names.c,v 5.9 2003/11/19 14:38:03 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/names.c,v 5.9 2003/11/19 14:38:03 sdo Exp $";
 
 
 /* 
@@ -72,168 +72,168 @@ static char const GCC_UNUSED rcsid[] =
 /* local routines */
 
 
-char *
+  char *
 ServiceName(
-     portnum port)
+    portnum port)
 {
-    static int cache = -1;
-    tcelen len;
-    struct servent *pse;
-    static char port_buf[20];
-    char *sb_port;
+  static int cache = -1;
+  tcelen len;
+  struct servent *pse;
+  static char port_buf[20];
+  char *sb_port;
 
-    if (!resolve_ports) {
-	snprintf(port_buf,sizeof(port_buf),"%hu",port);
-	return(port_buf);
-    }
+  if (!resolve_ports) {
+    snprintf(port_buf,sizeof(port_buf),"%hu",port);
+    return(port_buf);
+  }
 
-    /* only small numbers have names */
-    if (port > 1023) {
-	snprintf(port_buf,sizeof(port_buf),"%hu",port);
-	return(port_buf);
-    }
+  /* only small numbers have names */
+  if (port > 1023) {
+    snprintf(port_buf,sizeof(port_buf),"%hu",port);
+    return(port_buf);
+  }
 
 
-    /* check the cache */
-    if (cache == -1) {
-	cache = cacreate("service",250,0);
-    }
-    len = sizeof(port_buf);
+  /* check the cache */
+  if (cache == -1) {
+    cache = cacreate("service",250,0);
+  }
+  len = sizeof(port_buf);
+  if (debug > 2)
+    fprintf(stderr,"Searching cache for service %d='%s'\n",
+        port, port_buf);
+  if (calookup(cache,
+        (char *) &port,    (tcelen) sizeof(port),
+        (char *) port_buf, &len) == OK) {
     if (debug > 2)
-	fprintf(stderr,"Searching cache for service %d='%s'\n",
-		port, port_buf);
-    if (calookup(cache,
-		 (char *) &port,    (tcelen) sizeof(port),
-		 (char *) port_buf, &len) == OK) {
-	if (debug > 2)
-	    fprintf(stderr,"Found service %d='%s' in cache\n",
-		    port, port_buf);
-	return(port_buf);
-    }
-	
+      fprintf(stderr,"Found service %d='%s' in cache\n",
+          port, port_buf);
+    return(port_buf);
+  }
 
-    /* get port name as a string */
-    pse = getservbyport(port,"tcp");
-    if (pse != NULL) {
-	sb_port = pse->s_name;
-    } else {
-	snprintf(port_buf,sizeof(port_buf),"%d",port);
-	sb_port = port_buf;
-    }
-    if (debug > 2)
-	fprintf(stderr,"Putting service %d='%s' in cache\n",
-		port, sb_port);
-    cainsert(cache,
-	     (char *) &port,   (tcelen) sizeof(port),
-	     (char *) sb_port, (tcelen) (strlen(sb_port)+1));
 
-    return(sb_port);
+  /* get port name as a string */
+  pse = getservbyport(port,"tcp");
+  if (pse != NULL) {
+    sb_port = pse->s_name;
+  } else {
+    snprintf(port_buf,sizeof(port_buf),"%d",port);
+    sb_port = port_buf;
+  }
+  if (debug > 2)
+    fprintf(stderr,"Putting service %d='%s' in cache\n",
+        port, sb_port);
+  cainsert(cache,
+      (char *) &port,   (tcelen) sizeof(port),
+      (char *) sb_port, (tcelen) (strlen(sb_port)+1));
+
+  return(sb_port);
 }
 
 
 /* turn an ipaddr into a printable format */
 /* N.B. - result comes from static memory, save it before calling back! */
-char *
+  char *
 HostAddr(
     ipaddr ipaddress)
 {
-    char *adr;
+  char *adr;
 
-    if (ADDR_ISV6(&ipaddress)) {
-	static char adrv6[INET6_ADDRSTRLEN];
-	my_inet_ntop(AF_INET6,(char *) ipaddress.un.ip6.s6_addr,
-		     adrv6, INET6_ADDRSTRLEN);
-	adr = adrv6;
-    } else {
-	adr = inet_ntoa(ipaddress.un.ip4);
-    }
-        
-    return(adr);
+  if (ADDR_ISV6(&ipaddress)) {
+    static char adrv6[INET6_ADDRSTRLEN];
+    my_inet_ntop(AF_INET6,(char *) ipaddress.un.ip6.s6_addr,
+        adrv6, INET6_ADDRSTRLEN);
+    adr = adrv6;
+  } else {
+    adr = inet_ntoa(ipaddress.un.ip4);
+  }
+
+  return(adr);
 }
 
 
 
-char *
+  char *
 HostName(
     ipaddr ipaddress)
 {
-    tcelen len;
-    static int cache = -1;
-    struct hostent *phe;
-    char *sb_host;
-    static char name_buf[100];
-    char *adr;
+  tcelen len;
+  static int cache = -1;
+  struct hostent *phe;
+  char *sb_host;
+  static char name_buf[100];
+  char *adr;
 
-    adr = HostAddr(ipaddress);
+  adr = HostAddr(ipaddress);
 
-    if (!resolve_ipaddresses) {
-	return(adr);
-    }
-	
-    /* check the cache */
-    if (cache == -1) {
-	cache = cacreate("host",250,0);
-    }
-    len = sizeof(name_buf);
+  if (!resolve_ipaddresses) {
+    return(adr);
+  }
+
+  /* check the cache */
+  if (cache == -1) {
+    cache = cacreate("host",250,0);
+  }
+  len = sizeof(name_buf);
+  if (debug > 2)
+    fprintf(stderr,"Searching cache for host '%s'\n",
+        adr);
+  if (calookup(cache,
+        (char *) &ipaddress,    (tcelen)  sizeof(ipaddress),
+        (char *) name_buf, &len) == OK) {
     if (debug > 2)
-	fprintf(stderr,"Searching cache for host '%s'\n",
-		adr);
-    if (calookup(cache,
-		 (char *) &ipaddress,    (tcelen)  sizeof(ipaddress),
-		 (char *) name_buf, &len) == OK) {
-	if (debug > 2)
-	    fprintf(stderr,"Found host %s='%s' in cache\n",
-		    adr, name_buf);
-	return(name_buf);
+      fprintf(stderr,"Found host %s='%s' in cache\n",
+          adr, name_buf);
+    return(name_buf);
+  }
+
+
+  if (ADDR_ISV6(&ipaddress))
+    phe = gethostbyaddr ((char *)&ipaddress.un.ip6,
+        sizeof(ipaddress.un.ip6), AF_INET6);
+  else
+    phe = gethostbyaddr((char *)&ipaddress.un.ip4,
+        sizeof(ipaddress.un.ip4), AF_INET);
+  if (phe != NULL) {
+    sb_host = phe->h_name;
+  } else {
+    sb_host = adr;
+  }
+
+  if (use_short_names) {
+    char *pdot;
+
+    if ((pdot = strchr(sb_host,'.')) != NULL) {
+      *pdot = '\00';  /* chop off the end */
     }
-	
+  }
 
-    if (ADDR_ISV6(&ipaddress))
-	phe = gethostbyaddr ((char *)&ipaddress.un.ip6,
-			     sizeof(ipaddress.un.ip6), AF_INET6);
-    else
-	phe = gethostbyaddr((char *)&ipaddress.un.ip4,
-			    sizeof(ipaddress.un.ip4), AF_INET);
-    if (phe != NULL) {
-	sb_host = phe->h_name;
-    } else {
-	sb_host = adr;
-    }
+  if (debug > 2)
+    fprintf(stderr,"Putting host %s='%s' in cache\n",
+        adr, sb_host);
 
-    if (use_short_names) {
-	char *pdot;
+  cainsert(cache,
+      (char *) &ipaddress,   (tcelen)sizeof(ipaddress),
+      (char *) sb_host, (tcelen)(strlen(sb_host)+1));
 
-	if ((pdot = strchr(sb_host,'.')) != NULL) {
-	    *pdot = '\00';  /* chop off the end */
-	}
-    }
-
-    if (debug > 2)
-	fprintf(stderr,"Putting host %s='%s' in cache\n",
-		adr, sb_host);
-
-    cainsert(cache,
-	     (char *) &ipaddress,   (tcelen)sizeof(ipaddress),
-	     (char *) sb_host, (tcelen)(strlen(sb_host)+1));
-
-    return(sb_host);
+  return(sb_host);
 }
 
 
 
-char *
+  char *
 EndpointName(
     ipaddr ipaddress,
     portnum port)
 {
-    static char name_buf[100];
-    char *sb_host;
-    char *sb_port;
+  static char name_buf[100];
+  char *sb_host;
+  char *sb_port;
 
-    sb_host = HostName(ipaddress);
-    sb_port = ServiceName(port);
+  sb_host = HostName(ipaddress);
+  sb_port = ServiceName(port);
 
-    snprintf(name_buf,sizeof(name_buf),"%s:%s", sb_host, sb_port);
+  snprintf(name_buf,sizeof(name_buf),"%s:%s", sb_host, sb_port);
 
-    return(name_buf);
+  return(name_buf);
 }
