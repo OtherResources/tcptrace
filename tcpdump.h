@@ -54,13 +54,13 @@
  */
 /* Added FDDI support 9/96 Jeffrey Semke, Pittsburgh Supercomputing Center */
 static char const GCC_UNUSED rcsid_tcpdump[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/tcpdump.h,v 5.11 2003/11/19 14:38:08 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/tcpdump.h,v 5.11 2003/11/19 14:38:08 sdo Exp $";
 
 
 #define	SWAPLONG(y) \
-((((y)&0xff)<<24) | (((y)&0xff00)<<8) | (((y)&0xff0000)>>8) | (((y)>>24)&0xff))
+  ((((y)&0xff)<<24) | (((y)&0xff00)<<8) | (((y)&0xff0000)>>8) | (((y)>>24)&0xff))
 #define	SWAPSHORT(y) \
-	( (((y)&0xff)<<8) | (((y)&0xff00)>>8) )
+  ( (((y)&0xff)<<8) | (((y)&0xff00)>>8) )
 
 
 
@@ -106,13 +106,13 @@ static char const GCC_UNUSED rcsid_tcpdump[] =
 #define TCPDUMP_MAGIC 0xa1b2c3d4
 
 struct dump_file_header {
-	u_int	magic;
-	u_short version_major;
-	u_short version_minor;
-	int	thiszone;	/* gmt to local correction */
-	u_int	sigfigs;	/* accuracy of timestamps */
-	u_int	snaplen;	/* max length saved portion of each pkt */
-	u_int	linktype;	/* data link type (PCAP_DLT_*) */
+  u_int	magic;
+  u_short version_major;
+  u_short version_minor;
+  int	thiszone;	/* gmt to local correction */
+  u_int	sigfigs;	/* accuracy of timestamps */
+  u_int	snaplen;	/* max length saved portion of each pkt */
+  u_int	linktype;	/* data link type (PCAP_DLT_*) */
 };
 
 
@@ -122,32 +122,32 @@ struct dump_file_header {
  * packet interfaces.
  */
 struct packet_header {
-	u_int	ts_secs;	/* time stamp -- seconds */
-	u_int	ts_usecs;	/* time stamp -- useconds */
-	u_int	caplen;		/* length of portion present */
-	u_int	len;		/* length of this packet (off wire) */
+  u_int	ts_secs;	/* time stamp -- seconds */
+  u_int	ts_usecs;	/* time stamp -- useconds */
+  u_int	caplen;		/* length of portion present */
+  u_int	len;		/* length of this packet (off wire) */
 };
 
 
 #ifdef BY_HAND
-static void
+  static void
 swap_hdr(struct dump_file_header *pdfh)
 {
-    pdfh->version_major = SWAPSHORT(pdfh->version_major);
-    pdfh->version_minor = SWAPSHORT(pdfh->version_minor);
-    pdfh->thiszone      = SWAPLONG(pdfh->thiszone);
-    pdfh->sigfigs       = SWAPLONG(pdfh->sigfigs);
-    pdfh->snaplen       = SWAPLONG(pdfh->snaplen);
-    pdfh->linktype      = SWAPLONG(pdfh->linktype);
+  pdfh->version_major = SWAPSHORT(pdfh->version_major);
+  pdfh->version_minor = SWAPSHORT(pdfh->version_minor);
+  pdfh->thiszone      = SWAPLONG(pdfh->thiszone);
+  pdfh->sigfigs       = SWAPLONG(pdfh->sigfigs);
+  pdfh->snaplen       = SWAPLONG(pdfh->snaplen);
+  pdfh->linktype      = SWAPLONG(pdfh->linktype);
 }
 
-static void
+  static void
 swap_phdr(struct packet_header *pph)
 {
-    pph->caplen   = SWAPLONG(pph->caplen);
-    pph->len	  = SWAPLONG(pph->len);
-    pph->ts_secs  = SWAPLONG(pph->ts_secs);
-    pph->ts_usecs = SWAPLONG(pph->ts_usecs);
+  pph->caplen   = SWAPLONG(pph->caplen);
+  pph->len	  = SWAPLONG(pph->len);
+  pph->ts_secs  = SWAPLONG(pph->ts_secs);
+  pph->ts_usecs = SWAPLONG(pph->ts_usecs);
 }
 #endif /* BY_HAND */
 
@@ -157,25 +157,25 @@ swap_phdr(struct packet_header *pph)
 /* (Courtesy Jeffrey Semke, Pittsburgh Supercomputing Center) */
 /* locate ip within FDDI according to RFC 1188 */
 static int find_ip_fddi(char* buf, int iplen) {
-      char* ptr, *ptr2;
-      int i;
-      u_char pattern[] = {0xAA, 0x03, 0x00, 0x00, 0x00, 0x08, 0x00};
+  char* ptr, *ptr2;
+  int i;
+  u_char pattern[] = {0xAA, 0x03, 0x00, 0x00, 0x00, 0x08, 0x00};
 #define FDDIPATTERNLEN 7
 
-      ptr = ptr2 = buf;
+  ptr = ptr2 = buf;
 
-      for (i=0; i < FDDIPATTERNLEN; i++) {
-	    ptr2 = memchr(ptr,pattern[i],(iplen - (int)(ptr - buf)));
-	    if (!ptr2) 
-		  return (-1);
-	    if (i && (ptr2 != ptr)) {
-		  ptr2 = ptr2 - i - 1;
-		  i = -1;
-	    }
-	    ptr = ptr2 + 1;
-      }
-      return (ptr2 - buf + 1);
-      
+  for (i=0; i < FDDIPATTERNLEN; i++) {
+    ptr2 = memchr(ptr,pattern[i],(iplen - (int)(ptr - buf)));
+    if (!ptr2) 
+      return (-1);
+    if (i && (ptr2 != ptr)) {
+      ptr2 = ptr2 - i - 1;
+      i = -1;
+    }
+    ptr = ptr2 + 1;
+  }
+  return (ptr2 - buf + 1);
+
 }
 
 /* This function determine the offset for the IP packet in an Ethernet frame */
@@ -183,31 +183,31 @@ static int find_ip_fddi(char* buf, int iplen) {
 /* Written by Yann Samama (ysamama@nortelnetworks.com) on july 18th, 2003 */
 static int find_ip_eth(char* buf)
 {
-	unsigned short ppp_proto_type; /* the protocol type field of the PPP header */
-	unsigned short eth_proto_type; /* the protocol type field of the Ethernet header */
-	int offset = -1;               /* the calculated offset that this function will return */
+  unsigned short ppp_proto_type; /* the protocol type field of the PPP header */
+  unsigned short eth_proto_type; /* the protocol type field of the Ethernet header */
+  int offset = -1;               /* the calculated offset that this function will return */
 
-	memcpy(&eth_proto_type, buf+12, 2);
-	eth_proto_type = ntohs(eth_proto_type);
-	switch (eth_proto_type)
-	{
-		case ETHERTYPE_IPV6: /* it's pure IPv6 over ethernet */
-			offset = 14;
-			break;
-		case ETHERTYPE_IP: /* it's pure IPv4 over ethernet */
-			offset = 14;
-			break;
-		case ETHERTYPE_PPPOE_SESSION: /* it's a PPPoE session */
-			memcpy(&ppp_proto_type, buf+20, 2);
-			ppp_proto_type = ntohs(ppp_proto_type);
-			if (ppp_proto_type == 0x0021) /* it's IP over PPPoE */
-				offset = PPPOE_SIZE;
-			break;
-		default: /* well, this is not an IP packet */
-			offset = -1;
-			break;			
-	}
-	return offset;
+  memcpy(&eth_proto_type, buf+12, 2);
+  eth_proto_type = ntohs(eth_proto_type);
+  switch (eth_proto_type)
+  {
+    case ETHERTYPE_IPV6: /* it's pure IPv6 over ethernet */
+      offset = 14;
+      break;
+    case ETHERTYPE_IP: /* it's pure IPv4 over ethernet */
+      offset = 14;
+      break;
+    case ETHERTYPE_PPPOE_SESSION: /* it's a PPPoE session */
+      memcpy(&ppp_proto_type, buf+20, 2);
+      ppp_proto_type = ntohs(ppp_proto_type);
+      if (ppp_proto_type == 0x0021) /* it's IP over PPPoE */
+        offset = PPPOE_SIZE;
+      break;
+    default: /* well, this is not an IP packet */
+      offset = -1;
+      break;			
+  }
+  return offset;
 }
 
 
@@ -216,38 +216,38 @@ static int find_ip_eth(char* buf)
 /* Written by Yann Samama (ysamama@nortelnetworks.com) on june 19th, 2003 */
 static int find_ip_ppp(char* buf)
 {
-	unsigned char ppp_byte0;       /* the first byte of the PPP frame */
-	unsigned short ppp_proto_type; /* the protocol type field of the PPP header */
-	int offset = -1;               /* the calculated offset that this function will return */
+  unsigned char ppp_byte0;       /* the first byte of the PPP frame */
+  unsigned short ppp_proto_type; /* the protocol type field of the PPP header */
+  int offset = -1;               /* the calculated offset that this function will return */
 
-	memcpy(&ppp_byte0, buf, 1);
-	switch (ppp_byte0)
-	{
-		case 0xff:    /* It is HDLC PPP encapsulation (2 bytes for HDLC and 2 bytes for PPP) */
-			memcpy(&ppp_proto_type, buf+2, 2);
-			ppp_proto_type = ntohs(ppp_proto_type);
-			if (ppp_proto_type == 0x21)    /* That means HDLC PPP is encapsulating IP */
-				offset = 4;
-			else  /* That means PPP is *NOT* encapsulating IP */
-				offset = -1;
-			break;
+  memcpy(&ppp_byte0, buf, 1);
+  switch (ppp_byte0)
+  {
+    case 0xff:    /* It is HDLC PPP encapsulation (2 bytes for HDLC and 2 bytes for PPP) */
+      memcpy(&ppp_proto_type, buf+2, 2);
+      ppp_proto_type = ntohs(ppp_proto_type);
+      if (ppp_proto_type == 0x21)    /* That means HDLC PPP is encapsulating IP */
+        offset = 4;
+      else  /* That means PPP is *NOT* encapsulating IP */
+        offset = -1;
+      break;
 
-		case 0x21:   /* It is raw PPP encapsulation of IP with compressed (1 byte) protocol field */
-			offset = 1;
-			break;
+    case 0x21:   /* It is raw PPP encapsulation of IP with compressed (1 byte) protocol field */
+      offset = 1;
+      break;
 
-		case 0x00:   /* It is raw PPP encapsulation */
-			memcpy(&ppp_proto_type, buf, 2);
-			ppp_proto_type = ntohs(ppp_proto_type);
-			if (ppp_proto_type == 0x21)    /* It is raw PPP encapsulation of IP with uncompressed (2 bytes) protocol field */
-				offset = 2;
-			else  /* That means PPP is *NOT* encapsulating IP */
-				offset = -1;
-			break;
+    case 0x00:   /* It is raw PPP encapsulation */
+      memcpy(&ppp_proto_type, buf, 2);
+      ppp_proto_type = ntohs(ppp_proto_type);
+      if (ppp_proto_type == 0x21)    /* It is raw PPP encapsulation of IP with uncompressed (2 bytes) protocol field */
+        offset = 2;
+      else  /* That means PPP is *NOT* encapsulating IP */
+        offset = -1;
+      break;
 
-		default: /* There is certainly not an IP packet there ...*/
-			offset = -1;
-			break;
-	}
-	return offset;
+    default: /* There is certainly not an IP packet there ...*/
+      offset = -1;
+      break;
+  }
+  return offset;
 }

@@ -53,9 +53,9 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED copyright[] =
-    "@(#)Copyright (c) 2004 -- Ohio University.\n";
+"@(#)Copyright (c) 2004 -- Ohio University.\n";
 static char const GCC_UNUSED rcsid[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/pool.c,v 5.6 2003/11/19 14:38:04 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/pool.c,v 5.6 2003/11/19 14:38:04 sdo Exp $";
 
 
 /*#include <stdlib.h>*/
@@ -83,9 +83,9 @@ struct Pool {
 
 #define DFLT_POOLS_NUM		10	/* default number of pools */
 #define DFLT_BLOCKS_NUM		16	/* default number of blocks 
-					   in free list */
+                                 in free list */
 #define RESIZE_TIMES 2		/* by how many times we need to increase table
-				 * size for each memory pool */
+                           * size for each memory pool */
 
 /* global variables */
 static struct Pool	*pools = NULL;	/* table of memory pools */
@@ -106,11 +106,11 @@ static void PoolInsertList(const int, struct Block *);
  *		NOTE: pool numbers start with 0, so that zero pool number
  *		is valid.
  */
-int
+  int
 MakeMemPool(
-	    const unsigned bsize, /* block size for a pool */
-	    const int sorted)/* if non-zero, tells to sort linked list of 
-				free blocks */
+    const unsigned bsize, /* block size for a pool */
+    const int sorted)/* if non-zero, tells to sort linked list of 
+                        free blocks */
 {
   void			*buffer = NULL;
   unsigned		buffer_size = 0;
@@ -139,8 +139,8 @@ MakeMemPool(
     old_table_size = table_size;
     table_size = old_table_size * RESIZE_TIMES;
     if ((tmp_pools = (struct Pool *)realloc((void *)pools, 
-					    table_size*sizeof(struct Pool))) 
-	== NULL) {
+            table_size*sizeof(struct Pool))) 
+        == NULL) {
       fprintf(stderr, "MakeMemPool: Cannot allocate memory: realloc failed\n");
       exit(1);
     }
@@ -148,7 +148,7 @@ MakeMemPool(
       pools = tmp_pools;
     }
     memset(pools+(old_table_size*sizeof(struct Pool)), '\00', 
-	   (table_size-old_table_size)*sizeof(struct Pool));
+        (table_size-old_table_size)*sizeof(struct Pool));
   }
   pools[pool_num].block_size = bsize;
 
@@ -171,10 +171,10 @@ MakeMemPool(
  *		of memory for that number of units.
  *		If successful, returns a pointer, or NULL otherwise
  */
-void *
+  void *
 PoolMalloc(
-	   const int poolid,	/* pool id */
-	   const unsigned bytes)/* size of the  block (in bytes) */
+    const int poolid,	/* pool id */
+    const unsigned bytes)/* size of the  block (in bytes) */
 {
   unsigned	counter = 0;
   struct Block	*block = NULL;
@@ -209,7 +209,7 @@ PoolMalloc(
   if (pools[poolid].block_no < bnumber) {
     if (PoolRealloc(poolid, bnumber) < 0) {
       fprintf(stderr, 
-              "PoolMalloc: cannot allocate enough memory, PoolRealloc failed\n");
+          "PoolMalloc: cannot allocate enough memory, PoolRealloc failed\n");
     }
   }
 
@@ -222,39 +222,39 @@ PoolMalloc(
       next = block->next;
       /* count number of contigious blocks */
       for (counter = 1; counter < bnumber; counter++) {
-	if ((block + pools[poolid].block_size*counter) == next) {
-	  tmp_prev = next;
-	  next = next->next;
-	}
-	else {/* the block is not contigious, start over */
-	  block = next;
-	  prev = tmp_prev;
-	  break;
-	}
+        if ((block + pools[poolid].block_size*counter) == next) {
+          tmp_prev = next;
+          next = next->next;
+        }
+        else {/* the block is not contigious, start over */
+          block = next;
+          prev = tmp_prev;
+          break;
+        }
       }
     }
     if (block == NULL) {/* continious bytes  not found */
       /* call valloc for the block */
       buffer = PoolValloc(poolid, bnumber, &buffer_size);
       if (buffer == NULL) {
-	fprintf(stderr, "PoolMalloc: Cannot allocate memory: PoolValloc failed\n");
-	exit(1);
+        fprintf(stderr, "PoolMalloc: Cannot allocate memory: PoolValloc failed\n");
+        exit(1);
       }
       new_list = MakeList(poolid, buffer, buffer_size);
       block = new_list;
       /* save needed number of blocks and add the rest to the linked-list
        * of free blocks */
       for (counter = 0; counter < bnumber; counter++) {
-	new_list = new_list->next;
+        new_list = new_list->next;
       }
       PoolInsertList(poolid, new_list);
     }
     else {/* block of continious memory is found */
       if (block == pools[poolid].list) {
-	pools[poolid].list = next;
+        pools[poolid].list = next;
       }
       else {
-	prev->next = next;
+        prev->next = next;
       }
     }
     /* reset memory and return the block */
@@ -283,10 +283,10 @@ PoolMalloc(
  */
 static void *
 PoolValloc(
-	   const int poolid,		/* pool id */
-	   const unsigned bnumber,	/* we will get at least bnumber 
-					   of blocks */
-	   unsigned *bsize)		/* size of the returned buffer */
+    const int poolid,		/* pool id */
+    const unsigned bnumber,	/* we will get at least bnumber 
+                               of blocks */
+    unsigned *bsize)		/* size of the returned buffer */
 {
   unsigned	pagesize;
   void		*buffer = NULL;
@@ -310,7 +310,7 @@ PoolValloc(
   pagesize = 8*1024;
 #endif
   buffer_size = (ceil(pools[poolid].block_size * bnumber / 
-		      (float)pagesize)) * pagesize;
+        (float)pagesize)) * pagesize;
 
 #ifdef HAVE_VALLOC
   buffer = (void *)valloc(buffer_size);
@@ -341,11 +341,11 @@ PoolValloc(
  *		Breaks the buffer into peaces, makes a linked list, and return
  *		pointer to the list.
  */
-static struct Block *
+  static struct Block *
 MakeList(
-	 const int poolid,		/* pool id */
-	 void *buffer,			/* a buffer to be restructured */
-	 const unsigned buffer_size)	/* the buffer's size */
+    const int poolid,		/* pool id */
+    void *buffer,			/* a buffer to be restructured */
+    const unsigned buffer_size)	/* the buffer's size */
 {
   struct Block	*block = NULL;
   struct Block	*next = NULL;
@@ -362,10 +362,10 @@ MakeList(
     block->next = next;
     block = next;
   } while ((char *)next <= 
-	   ((char *)buffer + buffer_size - (pools[poolid].block_size*2)));
+      ((char *)buffer + buffer_size - (pools[poolid].block_size*2)));
   block->next = NULL;
 
- return (struct Block *)buffer;
+  return (struct Block *)buffer;
 }
 
 /*
@@ -374,10 +374,10 @@ MakeList(
  *		insert new blocks into the pool's linked list of free blocks.
  *		If successful, returns 0, or -1 otherwise.
  */
-static int
+  static int
 PoolRealloc(
-	    const int poolid,
-	    const unsigned bnumber)
+    const int poolid,
+    const unsigned bnumber)
 {
   void		*buffer = NULL;
   unsigned	buffer_size;
@@ -391,7 +391,7 @@ PoolRealloc(
   buffer = PoolValloc(poolid, bnumber, &buffer_size);
   if (buffer == NULL) {
     fprintf(stderr, "PoolRealloc: Cannot allocate memory: PoolValloc failed\n");
-   exit(1);
+    exit(1);
   }
   /* build a linked list from the buffer */
   new_list = MakeList(poolid, buffer, buffer_size);
@@ -410,10 +410,10 @@ PoolRealloc(
  * PoolInsertList - given by a pool id and a linked list, insert the list
  *		into the pool's linked list of free blocks.
  */
-static void
+  static void
 PoolInsertList(
-	       const int poolid,
-	       struct Block *new_list)
+    const int poolid,
+    struct Block *new_list)
 {
   struct Block	*block = NULL;
   struct Block	*next = NULL;
@@ -425,10 +425,10 @@ PoolInsertList(
     return;
   }
   block = pools[poolid].list;
-  
+
   if (pools[poolid].sorted) {
-  /* search for a place to insert new linked list into 
-   * the pool's linked list and insert it */
+    /* search for a place to insert new linked list into 
+     * the pool's linked list and insert it */
     if (block > new_list) {/* new list is to inserted at the head */
       next = block;
       pools[poolid].list = new_list;
@@ -436,8 +436,8 @@ PoolInsertList(
     }
     else {/* search for right place for insertion */
       while ((block->next < new_list) &&
-	     (block->next != NULL)) {
-	block = block->next;
+          (block->next != NULL)) {
+        block = block->next;
       }
       next = block->next;
       block->next = new_list;
@@ -462,10 +462,10 @@ PoolInsertList(
  * PoolFree - given by a pool id and a pointer, free that block of memory
  *		from the pool.
  */
-void
+  void
 PoolFree(
-	 const int poolid,
-	 void *ptr)
+    const int poolid,
+    void *ptr)
 { 
   struct Block	*block;
   struct Block	*b, *n;
@@ -488,10 +488,10 @@ PoolFree(
   if (0) { /* this part was used for debugging. slows down dramatically */
     for (b = pools[poolid].list; b; b = b->next) {
       if (b == block) {
-	fprintf(stderr, 
-		"WARNING! PoolFree(%0x, %p) is called for already freed block of memory\n",
-		poolid, ptr);
-	return;
+        fprintf(stderr, 
+            "WARNING! PoolFree(%0x, %p) is called for already freed block of memory\n",
+            poolid, ptr);
+        return;
       }
     }
   }
@@ -512,8 +512,8 @@ PoolFree(
     else {
       b = pools[poolid].list;
       while ((b->next < block) &&
-	     (b->next != NULL)) {
-	b = b->next;
+          (b->next != NULL)) {
+        b = b->next;
       }
       /* insert after b */
       n = b->next;

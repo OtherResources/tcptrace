@@ -54,15 +54,15 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED rcsid_versnum[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/versnum.c,v 5.5 2003/11/19 14:38:06 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/versnum.c,v 5.5 2003/11/19 14:38:06 sdo Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "version.h"
 
-int
+  int
 main()
 {
-    printf("%s\n", VERSION_NUM);
-    exit(0);
+  printf("%s\n", VERSION_NUM);
+  exit(0);
 }

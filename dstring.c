@@ -54,15 +54,15 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED rcsid_dstring[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/dstring.c,v 5.2 2003/11/19 14:38:01 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/dstring.c,v 5.2 2003/11/19 14:38:01 sdo Exp $";
 
 
 
 /* our dynamic string structure */
 struct dstring {
-    char *buf;
-    int ix_nextch;
-    int buflen;
+  char *buf;
+  int ix_nextch;
+  int buflen;
 };
 
 
@@ -70,25 +70,25 @@ struct dstring {
 static void DSExpand(struct dstring *pds);
 
 /* make the total string size longer */
-static void
+  static void
 DSExpand(struct dstring *pds)
 {
-    unsigned newsize;
-    char *newbuf;
-    
-    /* choose a new size */
-    if (pds->buflen == 0)
-	newsize = 64;
-    else if (pds->buflen < (16*1024))
-	newsize = pds->buflen * 2;
-    else
-	newsize = pds->buflen +(4*1024);
+  unsigned newsize;
+  char *newbuf;
 
-    /* make the new buffer (using the old one if possible) */
-    newbuf = ReallocZ(pds->buf,pds->buflen,newsize);
+  /* choose a new size */
+  if (pds->buflen == 0)
+    newsize = 64;
+  else if (pds->buflen < (16*1024))
+    newsize = pds->buflen * 2;
+  else
+    newsize = pds->buflen +(4*1024);
 
-    pds->buflen = newsize;
-    pds->buf = newbuf;
+  /* make the new buffer (using the old one if possible) */
+  newbuf = ReallocZ(pds->buf,pds->buflen,newsize);
+
+  pds->buflen = newsize;
+  pds->buf = newbuf;
 }
 
 
@@ -97,99 +97,99 @@ DSExpand(struct dstring *pds)
 
 
 /* Make a new dstring */
-struct dstring *
+  struct dstring *
 DSNew(void)
 {
-    struct dstring *pret;
+  struct dstring *pret;
 
-    /* malloc and zero out */
-    pret = MallocZ(sizeof(struct dstring));
+  /* malloc and zero out */
+  pret = MallocZ(sizeof(struct dstring));
 
-    return(pret);
+  return(pret);
 }
 
 
 
 /* Destroy a dstring */
-void
+  void
 DSDestroy(struct dstring **ppds)
 {
-    free((*ppds)->buf);
-    free((*ppds));
-    *ppds = NULL;
+  free((*ppds)->buf);
+  free((*ppds));
+  *ppds = NULL;
 }
 
 
 
 
 /* erase the string, but leave the structure otherwise intact */
-void
+  void
 DSErase(
     struct dstring *pds)
 {
-    pds->ix_nextch = 0;
+  pds->ix_nextch = 0;
 }
 
 
 
 /* append a character to a dstring */
-void
+  void
 DSAppendChar(
     struct dstring *pds,
     char ch)
 {
-    /* status:
-       buf[0,1,2,...(buflen-1)] are valid
-       buf[ix_nextch] is where the next character should go
-       if (ix_nextch > (buflen-1)), then it's full
-       same as (ix_nextch+1 > (buflen))
-    */
-    if (1 /* for the null */ + pds->ix_nextch+1 > pds->buflen) {
-	DSExpand(pds);
-    }
+  /* status:
+     buf[0,1,2,...(buflen-1)] are valid
+     buf[ix_nextch] is where the next character should go
+     if (ix_nextch > (buflen-1)), then it's full
+     same as (ix_nextch+1 > (buflen))
+     */
+  if (1 /* for the null */ + pds->ix_nextch+1 > pds->buflen) {
+    DSExpand(pds);
+  }
 
-    pds->buf[pds->ix_nextch++] = ch;
-    pds->buf[pds->ix_nextch] = '\00'; /* keep it NULL terminated */
+  pds->buf[pds->ix_nextch++] = ch;
+  pds->buf[pds->ix_nextch] = '\00'; /* keep it NULL terminated */
 }
 
 
 
 /* append a normal string to the end of a dstring */
-void
+  void
 DSAppendString(
     struct dstring *pds,
     char *str)
 {
-    while (*str) {
-	DSAppendChar(pds,*str);
-	++str;
-    }
+  while (*str) {
+    DSAppendChar(pds,*str);
+    ++str;
+  }
 }
 
 
 /* append at most 'len' characters from a normal string to a dstring */
-void
+  void
 DSAppendStringN(
     struct dstring *pds,
     char *str,
     int len)
 {
-    while (*str) {
-	if (len-- <= 0)
-	    break;
-	DSAppendChar(pds,*str);
-	++str;
-    }
+  while (*str) {
+    if (len-- <= 0)
+      break;
+    DSAppendChar(pds,*str);
+    ++str;
+  }
 }
 
 
 /* return the value of the string */
-char *
+  char *
 DSVal(
     struct dstring *pds)
 {
-    if (pds->buflen)
-	return(pds->buf);
-    else
-	return("");		/* not used yet, treat as null */
+  if (pds->buflen)
+    return(pds->buf);
+  else
+    return("");		/* not used yet, treat as null */
 }

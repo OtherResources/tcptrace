@@ -54,9 +54,9 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED copyright[] =
-    "@(#)Copyright (c) 2004 -- Ohio University.\n";
+"@(#)Copyright (c) 2004 -- Ohio University.\n";
 static char const GCC_UNUSED rcsid[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/netscout.c,v 5.8 2003/11/19 14:38:04 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/netscout.c,v 5.8 2003/11/19 14:38:04 sdo Exp $";
 
 
 /* 
@@ -75,7 +75,7 @@ static char const GCC_UNUSED rcsid[] =
 
 #ifdef linux
 #ifdef strncpy
- /* problem with macro won't let this file compile */
+/* problem with macro won't let this file compile */
 #undef strncpy
 #endif /* strncpy */
 #endif /* linux */
@@ -103,17 +103,17 @@ struct netscout_header {
 
 /* netm packet header format */
 struct netscout_packet_header {
-    tt_int32	FrameNum;
-    tt_int32	Size;
-    tt_int32	tstamp_secs;
-    tt_int32	tstamp_msecs;
-    tt_int32	tlen;
-    tt_int32	len;
+  tt_int32	FrameNum;
+  tt_int32	Size;
+  tt_int32	tstamp_secs;
+  tt_int32	tstamp_msecs;
+  tt_int32	tlen;
+  tt_int32	len;
 };
 
 
 /* currently only works for ETHERNET */
-static int
+  static int
 pread_netscout(
     struct timeval	*ptime,
     int		 	*plen,
@@ -129,7 +129,7 @@ pread_netscout(
   int day, hour, minute, sec, msec;
   struct tm tmval;
   int byte0, byte1, byte2,byte3,byte4,byte5,byte6,byte7,
-    byte8,byte9,byte10,byte11,byte12,byte13,byte14,byte15;
+      byte8,byte9,byte10,byte11,byte12,byte13,byte14,byte15;
   int index;
 
   /* Look for Frame line to signal start of packet */
@@ -151,7 +151,7 @@ pread_netscout(
 
   /* recover the timestamp */
   sscanf(strlen("Time") + strstr(buffer_string, "Time"), "%s %d %d:%d:%d.%d", 
-	 month, &day, &hour, &minute, &sec, &msec);
+      month, &day, &hour, &minute, &sec, &msec);
   tmval.tm_sec = sec;
   tmval.tm_min = minute;
   tmval.tm_hour = hour;
@@ -178,9 +178,9 @@ pread_netscout(
 
   index = 0;
   sscanf(strstr(buffer_string,":") + 1, 
-	 "%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x", 
-	 &byte0, &byte1, &byte2,&byte3,&byte4,&byte5,&byte6,&byte7,
-	 &byte8,&byte9,&byte10,&byte11,&byte12,&byte13,&byte14,&byte15);
+      "%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x", 
+      &byte0, &byte1, &byte2,&byte3,&byte4,&byte5,&byte6,&byte7,
+      &byte8,&byte9,&byte10,&byte11,&byte12,&byte13,&byte14,&byte15);
   pep_buf[index++] =ntohl(byte0<<24|byte1<<16|byte2<<8|byte3);
   pep_buf[index++] =ntohl(byte4<<24|byte5<<16|byte6<<8|byte7);
   pep_buf[index++] =ntohl(byte8<<24|byte9<<16|byte10<<8|byte11);
@@ -197,9 +197,9 @@ pread_netscout(
   }
 
   sscanf(strstr(buffer_string,":") + 1, 
-	 "%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x", 
-	 &byte0, &byte1, &byte2,&byte3,&byte4,&byte5,&byte6,&byte7,
-	 &byte8,&byte9,&byte10,&byte11,&byte12,&byte13,&byte14,&byte15);
+      "%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x", 
+      &byte0, &byte1, &byte2,&byte3,&byte4,&byte5,&byte6,&byte7,
+      &byte8,&byte9,&byte10,&byte11,&byte12,&byte13,&byte14,&byte15);
   pep_buf[index++] =ntohl(byte0<<24|byte1<<16|byte2<<8|byte3);
   pep_buf[index++] =ntohl(byte4<<24|byte5<<16|byte6<<8|byte7);
   pep_buf[index++] =ntohl(byte8<<24|byte9<<16|byte10<<8|byte11);
@@ -217,15 +217,15 @@ pread_netscout(
   }
 
   sscanf(strstr(buffer_string,":") + 1, 
-	 "%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x", 
-	 &byte0, &byte1, &byte2,&byte3,&byte4,&byte5,&byte6,&byte7,
-	 &byte8,&byte9,&byte10,&byte11,&byte12,&byte13,&byte14,&byte15);
+      "%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x", 
+      &byte0, &byte1, &byte2,&byte3,&byte4,&byte5,&byte6,&byte7,
+      &byte8,&byte9,&byte10,&byte11,&byte12,&byte13,&byte14,&byte15);
   pep_buf[index++] =ntohl(byte0<<24|byte1<<16|byte2<<8|byte3);
   pep_buf[index++] =ntohl(byte4<<24|byte5<<16|byte6<<8|byte7);
   pep_buf[index++] =ntohl(byte8<<24|byte9<<16|byte10<<8|byte11);
   pep_buf[index++] =ntohl(byte12<<24|byte13<<16|byte14<<8|byte15);
-  
-  
+
+
   memcpy((char *) pip_buf, (char *) pep_buf + 14, 48);
 
   *ppip = (struct ip *) pip_buf;
@@ -237,41 +237,41 @@ pread_netscout(
 /* is the input file a NetScout format file?? */
 pread_f *is_netscout(char *filename)
 {    
-   struct netscout_header nhdr;
-   char * retval;
-   char buffer_string[256];
+  struct netscout_header nhdr;
+  char * retval;
+  char buffer_string[256];
 
 #ifdef __WIN32
-    if((fp = fopen(filename, "r")) == NULL) {
-       perror(filename);
-       exit(-1);
-    }
+  if((fp = fopen(filename, "r")) == NULL) {
+    perror(filename);
+    exit(-1);
+  }
 #endif /* __WIN32 */   
-   
-   /* read the netscout file header */
-   retval =  fgets (buffer_string, 255, SYS_STDIN);
-   if(strstr(buffer_string, "Page" ) != NULL) {
-     retval =  fgets (buffer_string, 255, SYS_STDIN);
-     if(strstr(buffer_string, "Protocol Decode Output") != NULL) {
-       fflush(stdout);
-       retval =  fgets (buffer_string, 255, SYS_STDIN);
-       if(strstr(buffer_string, "Packets from the file:") != NULL) {
-	 strncpy((char *) &(nhdr.filename[0]), buffer_string, 
-		 strlen("Packets from the file:")); 
-       }
-     }
-   }
-   else 
-     {
-       rewind(SYS_STDIN);
-       return(NULL);
-     }
-   
-   /* OK, it's mine.  Init some stuff */
-   pep_buf = MallocZ(IP_MAXPACKET);
-   pip_buf = MallocZ(IP_MAXPACKET);
 
-   return(pread_netscout);
+  /* read the netscout file header */
+  retval =  fgets (buffer_string, 255, SYS_STDIN);
+  if(strstr(buffer_string, "Page" ) != NULL) {
+    retval =  fgets (buffer_string, 255, SYS_STDIN);
+    if(strstr(buffer_string, "Protocol Decode Output") != NULL) {
+      fflush(stdout);
+      retval =  fgets (buffer_string, 255, SYS_STDIN);
+      if(strstr(buffer_string, "Packets from the file:") != NULL) {
+        strncpy((char *) &(nhdr.filename[0]), buffer_string, 
+            strlen("Packets from the file:")); 
+      }
+    }
+  }
+  else 
+  {
+    rewind(SYS_STDIN);
+    return(NULL);
+  }
+
+  /* OK, it's mine.  Init some stuff */
+  pep_buf = MallocZ(IP_MAXPACKET);
+  pip_buf = MallocZ(IP_MAXPACKET);
+
+  return(pread_netscout);
 
 }
 

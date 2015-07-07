@@ -54,9 +54,9 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED copyright[] =
-    "@(#)Copyright (c) 2004 -- Ohio University.\n";
+"@(#)Copyright (c) 2004 -- Ohio University.\n";
 static char const GCC_UNUSED rcsid[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/nlanr.c,v 1.7 2003/11/19 14:38:04 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/nlanr.c,v 1.7 2003/11/19 14:38:04 sdo Exp $";
 
 
 /* 
@@ -110,20 +110,20 @@ static FILE *fp;
 /* information necessary to understand NLANL Tsh output */
 #define TSH_DUMP_OFFSET 16
 struct tsh_packet_header {
-    unsigned int	ts_secs;
+  unsigned int	ts_secs;
 #ifdef _BIT_FIELDS_LTOH
-    unsigned int	interface_id:8;
-    unsigned int	ts_usecs:24;
+  unsigned int	interface_id:8;
+  unsigned int	ts_usecs:24;
 #else
-    unsigned int	ts_usecs:24;
-    unsigned int	interface_id:8;
+  unsigned int	ts_usecs:24;
+  unsigned int	interface_id:8;
 #endif
 };
 
 struct tsh_frame {
-    struct tsh_packet_header tph;
-    struct ip ip_header;
-    struct tcphdr tcp_header;  /* just the first 16 bytes present */
+  struct tsh_packet_header tph;
+  struct ip ip_header;
+  struct tcphdr tcp_header;  /* just the first 16 bytes present */
 };
 
 
@@ -132,7 +132,7 @@ static struct ether_header *pep;
 
 /* return the next packet header */
 /* currently only works for ETHERNET */
-static int
+  static int
 pread_nlanr(
     struct timeval	*ptime,
     int		 	*plen,
@@ -142,40 +142,40 @@ pread_nlanr(
     struct ip		**ppip,
     void		**pplast)
 {
-    int rlen;
-    static struct tsh_frame hdr;
-    int packlen = sizeof(struct ip) + sizeof(struct tcphdr);
-    int hlen = 44;
+  int rlen;
+  static struct tsh_frame hdr;
+  int packlen = sizeof(struct ip) + sizeof(struct tcphdr);
+  int hlen = 44;
 
-    /* read the next frames */
-    if ((rlen=fread(&hdr,1,hlen,SYS_STDIN)) != hlen) {
-	if (debug && (rlen != 0))
-	    fprintf(stderr,"Bad tsh packet header (len:%d)\n", rlen);
-	return(0);
-    }
+  /* read the next frames */
+  if ((rlen=fread(&hdr,1,hlen,SYS_STDIN)) != hlen) {
+    if (debug && (rlen != 0))
+      fprintf(stderr,"Bad tsh packet header (len:%d)\n", rlen);
+    return(0);
+  }
 
-    /* grab the time */
-    ptime->tv_sec  = hdr.tph.ts_secs;
-    ptime->tv_usec = hdr.tph.ts_usecs;
+  /* grab the time */
+  ptime->tv_sec  = hdr.tph.ts_secs;
+  ptime->tv_usec = hdr.tph.ts_usecs;
 
-    /* truncated length is just an IP header and a TCP header */
-    *ptlen         = packlen;
+  /* truncated length is just an IP header and a TCP header */
+  *ptlen         = packlen;
 
-    /* original length is from the IP header */
-    *plen          = hdr.ip_header.ip_len;
+  /* original length is from the IP header */
+  *plen          = hdr.ip_header.ip_len;
 
 
-    /* Here's the IP/TCP stuff */
-    *ppip  = &hdr.ip_header;
+  /* Here's the IP/TCP stuff */
+  *ppip  = &hdr.ip_header;
 
-    /* Here's the last byte of the packet */
-    *pplast = (char *)(*ppip)+packlen-1;
+  /* Here's the last byte of the packet */
+  *pplast = (char *)(*ppip)+packlen-1;
 
-    /* here's the (pseudo) ethernet header */
-    *pphys  = pep;
-    *pphystype = PHYS_ETHER;
+  /* here's the (pseudo) ethernet header */
+  *pphys  = pep;
+  *pphystype = PHYS_ETHER;
 
-    return(1);
+  return(1);
 }
 
 
@@ -185,55 +185,55 @@ pread_nlanr(
  */
 pread_f *is_nlanr(char *filename)
 {
-    struct tsh_frame tf;
-    int rlen;
-   
+  struct tsh_frame tf;
+  int rlen;
+
 #ifdef __WIN32
-    if((fp = fopen(filename, "r")) == NULL) {
-       perror(filename);
-       exit(-1);
-    }
+  if((fp = fopen(filename, "r")) == NULL) {
+    perror(filename);
+    exit(-1);
+  }
 #endif /* __WIN32 */   
 
-    /* tsh is a little hard because there's no magic number */
-    
+  /* tsh is a little hard because there's no magic number */
 
-    /* read the tsh file header */
-    if ((rlen=fread(&tf,1,sizeof(tf),SYS_STDIN)) != sizeof(tf)) {
-	/* not even a full frame */
-	rewind(SYS_STDIN);
-	return(NULL);
-    }
+
+  /* read the tsh file header */
+  if ((rlen=fread(&tf,1,sizeof(tf),SYS_STDIN)) != sizeof(tf)) {
+    /* not even a full frame */
     rewind(SYS_STDIN);
+    return(NULL);
+  }
+  rewind(SYS_STDIN);
 
-    if (debug) {
-	printf("nlanr tsh ts_secs:   %d\n", tf.tph.ts_secs);
-	printf("nlanr tsh ts_usecs:  %d\n", tf.tph.ts_usecs);
-	printf("nlanr tsh interface: %d\n", tf.tph.interface_id);
-	printf("nlanr sizeof(tf):    %d\n", sizeof(tf));
-	printf("nlanr sizeof(tph):   %d\n", sizeof(tf.tph));
-	if (debug > 1)
-	    PrintRawDataHex("NLANR TSH header",&tf,(char *)&tf+39);
-    }
+  if (debug) {
+    printf("nlanr tsh ts_secs:   %d\n", tf.tph.ts_secs);
+    printf("nlanr tsh ts_usecs:  %d\n", tf.tph.ts_usecs);
+    printf("nlanr tsh interface: %d\n", tf.tph.interface_id);
+    printf("nlanr sizeof(tf):    %d\n", sizeof(tf));
+    printf("nlanr sizeof(tph):   %d\n", sizeof(tf.tph));
+    if (debug > 1)
+      PrintRawDataHex("NLANR TSH header",&tf,(char *)&tf+39);
+  }
 
-    /* quick heuristics */
-    if (((tf.ip_header.ip_v != 4) && (tf.ip_header.ip_v != 6))
-	) {
-	return(NULL);
-    }
-
-
-    /* OK, let's hope it's a tsh file */
-
-
-    /* there's no physical header present, so make up one */
-    pep = MallocZ(sizeof(struct ether_header));
-    pep->ether_type = htons(ETHERTYPE_IP);
-
-    if (debug)
-	fprintf(stderr,"TSH format, interface ID %d\n", tf.tph.interface_id);
+  /* quick heuristics */
+  if (((tf.ip_header.ip_v != 4) && (tf.ip_header.ip_v != 6))
+     ) {
+    return(NULL);
+  }
 
 
-    return(pread_nlanr);
+  /* OK, let's hope it's a tsh file */
+
+
+  /* there's no physical header present, so make up one */
+  pep = MallocZ(sizeof(struct ether_header));
+  pep->ether_type = htons(ETHERTYPE_IP);
+
+  if (debug)
+    fprintf(stderr,"TSH format, interface ID %d\n", tf.tph.interface_id);
+
+
+  return(pread_nlanr);
 }
 #endif /* GROK_NLANR */

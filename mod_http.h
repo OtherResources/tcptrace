@@ -53,7 +53,7 @@
  *		http://www.tcptrace.org/
  */
 static char const GCC_UNUSED rcsid_http[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/mod_http.h,v 5.4 2003/11/19 14:38:07 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/mod_http.h,v 5.4 2003/11/19 14:38:07 sdo Exp $";
 
 /* header file for http.c */
 int http_init(int argc, char *argv[]);

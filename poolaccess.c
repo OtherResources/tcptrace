@@ -53,9 +53,9 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED copyright[] =
-    "@(#)Copyright (c) 2004 -- Ohio University.\n";
+"@(#)Copyright (c) 2004 -- Ohio University.\n";
 static char const GCC_UNUSED rcsid[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/poolaccess.c,v 5.5 2003/11/19 14:38:04 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/poolaccess.c,v 5.5 2003/11/19 14:38:04 sdo Exp $";
 
 
 static long tcp_pair_pool = -1;
@@ -66,149 +66,149 @@ static long ptp_ptr_pool  = -1;
 static long segment_pool  = -1;
 static long quadrant_pool = -1;
 
-tcp_pair *
+  tcp_pair *
 MakeTcpPair(
-	    void)
+    void)
 {
   tcp_pair	*ptr = NULL;
 
   if (tcp_pair_pool < 0) {
     tcp_pair_pool = MakeMemPool(sizeof(tcp_pair), 0);
   }
-  
+
   ptr = PoolMalloc(tcp_pair_pool, sizeof(tcp_pair));
   return ptr;
 }
 
-void
+  void
 FreeTcpPair(
-	    tcp_pair *ptr)
+    tcp_pair *ptr)
 {
   PoolFree(tcp_pair_pool, ptr);
 }
 
-udp_pair *
+  udp_pair *
 MakeUdpPair(
-	    void)
+    void)
 {
   udp_pair	*ptr = NULL;
 
   if (udp_pair_pool < 0) {
     udp_pair_pool = MakeMemPool(sizeof(udp_pair), 0);
   }
-  
+
   ptr = PoolMalloc(udp_pair_pool, sizeof(udp_pair));
   return ptr;
 }
 
-void
+  void
 FreeUdpPair(
-	    udp_pair *ptr)
+    udp_pair *ptr)
 {
   PoolFree(udp_pair_pool, ptr);
 }
 
-seqspace *
+  seqspace *
 MakeSeqspace(
-	     void)
+    void)
 {
   seqspace	*ptr = NULL;
 
   if (seqspace_pool < 0) {
     seqspace_pool = MakeMemPool(sizeof(seqspace), 0);
   }
-  
+
   ptr = PoolMalloc(seqspace_pool, sizeof(seqspace));
   return ptr;
 }
 
-void
+  void
 FreeSeqspace(
-	     seqspace *ptr)
+    seqspace *ptr)
 {
   PoolFree(seqspace_pool, ptr);
 }
 
-ptp_snap *
+  ptp_snap *
 MakePtpSnap(
-	    void)
+    void)
 {
   ptp_snap	*ptr = NULL;
 
   if (ptp_snap_pool < 0) {
     ptp_snap_pool = MakeMemPool(sizeof(ptp_snap), 0);
   }
-  
+
   ptr = PoolMalloc(ptp_snap_pool, sizeof(ptp_snap));
   return ptr;
 }
 
-void
+  void
 FreePtpSnap(
-	    ptp_snap *ptr)
+    ptp_snap *ptr)
 {
   PoolFree(ptp_snap_pool, ptr);
 }
 
-ptp_ptr *
+  ptp_ptr *
 MakePtpPtr(
-	   void)
+    void)
 {
   ptp_ptr	*ptr = NULL;
 
   if (ptp_ptr_pool < 0) {
     ptp_ptr_pool = MakeMemPool(sizeof(ptp_ptr), 0);
   }
-  
+
   ptr = PoolMalloc(ptp_ptr_pool, sizeof(ptp_ptr));
   return ptr;
 }
 
-void
+  void
 FreePtpPtr(
-	   ptp_ptr *ptr)
+    ptp_ptr *ptr)
 {
   PoolFree(ptp_ptr_pool, ptr);
 }
 
-segment *
+  segment *
 MakeSegment(
-	    void)
+    void)
 {
   segment	*ptr = NULL;
 
   if (segment_pool < 0) {
     segment_pool = MakeMemPool(sizeof(segment), 0);
   }
-  
+
   ptr = PoolMalloc(segment_pool, sizeof(segment));
   return ptr;
 }
 
-void
+  void
 FreeSegment(
-	    segment *ptr)
+    segment *ptr)
 {
   PoolFree(segment_pool, ptr);
 }
 
-quadrant *
+  quadrant *
 MakeQuadrant(
-	     void)
+    void)
 {
   quadrant	*ptr = NULL;
 
   if (quadrant_pool < 0) {
     quadrant_pool = MakeMemPool(sizeof(quadrant), 0);
   }
-  
+
   ptr = PoolMalloc(quadrant_pool, sizeof(quadrant));
   return ptr;
 }
 
-void
+  void
 FreeQuadrant(
-	     quadrant *ptr)
+    quadrant *ptr)
 {
   PoolFree(quadrant_pool, ptr);
 }

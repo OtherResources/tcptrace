@@ -53,7 +53,7 @@
  *		http://www.tcptrace.org/
  */
 static char const GCC_UNUSED rcsid_file_formats[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/file_formats.h,v 5.9 2003/11/19 14:38:06 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/file_formats.h,v 5.9 2003/11/19 14:38:06 sdo Exp $";
 
 
 /* 
@@ -69,9 +69,9 @@ static char const GCC_UNUSED rcsid_file_formats[] =
 /**************************************************************/
 
 struct supported_formats {
-    pread_f	*(*test_func)(char *filename);	/* pointer to the tester function	*/
-    char	*format_name;	/* name of the file format		*/
-    char	*format_descr;	/* description of the file format	*/
+  pread_f	*(*test_func)(char *filename);	/* pointer to the tester function	*/
+  char	*format_name;	/* name of the file format		*/
+  char	*format_descr;	/* description of the file format	*/
 };
 
 /* for each file type GLORP you want to support, provide a      	*/
@@ -94,28 +94,28 @@ struct supported_formats {
 /* install the is_GLORP() routines supported */
 struct supported_formats file_formats[] = {
 #ifdef GROK_TCPDUMP
-	{is_tcpdump,	"tcpdump","tcpdump -- Public domain program from LBL"},
+  {is_tcpdump,	"tcpdump","tcpdump -- Public domain program from LBL"},
 #endif /* GROK_TCPDUMP */
 #ifdef GROK_SNOOP
-	{is_snoop,	"snoop","Sun Snoop -- Distributed with Solaris"},
+  {is_snoop,	"snoop","Sun Snoop -- Distributed with Solaris"},
 #endif /* GROK_SNOOP */
 #ifdef GROK_ETHERPEEK
-	{is_EP,		"etherpeek","etherpeek -- Mac sniffer program"},
+  {is_EP,		"etherpeek","etherpeek -- Mac sniffer program"},
 #endif /* GROK_ETHERPEEK */
 #ifdef GROK_NETM
-	{is_netm,	"netmetrix","Net Metrix -- Commercial program from HP"},
+  {is_netm,	"netmetrix","Net Metrix -- Commercial program from HP"},
 #endif /* GROK_NETM */
 #ifdef GROK_NS
-	{is_ns,		"ns","ns -- network simulator from LBL"},
+  {is_ns,		"ns","ns -- network simulator from LBL"},
 #endif /* GROK_NS */
 #ifdef GROK_NLANR
-	{is_nlanr,	"tsh","NLANL Tsh Format"},
+  {is_nlanr,	"tsh","NLANL Tsh Format"},
 #endif /* GROK_NLANR */
 #ifdef GROK_NETSCOUT
-	{is_netscout,	"netscout","NetScout Manager format"},
+  {is_netscout,	"netscout","NetScout Manager format"},
 #endif /* GROK_NETSCOUT */
 #ifdef GROK_ERF
-	{is_erf,	"erf","Endace Extensible Record Format"},
+  {is_erf,	"erf","Endace Extensible Record Format"},
 #endif /* GROK_ERF */
 };
 

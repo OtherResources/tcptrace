@@ -54,7 +54,7 @@
 #ifndef _POOL_H
 #define _POOL_H
 static char const GCC_UNUSED rcsid_pool[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/pool.h,v 5.4 2003/11/19 14:38:08 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/pool.h,v 5.4 2003/11/19 14:38:08 sdo Exp $";
 
 extern int debug;
 

@@ -53,7 +53,7 @@
  */
 #include "tcptrace.h"
 static char const GCC_UNUSED rcsid[] =
-    "@(#)$Header: /usr/local/cvs/tcptrace/mod_realtime.c,v 5.7 2003/11/19 14:38:03 sdo Exp $";
+"@(#)$Header: /usr/local/cvs/tcptrace/mod_realtime.c,v 5.7 2003/11/19 14:38:03 sdo Exp $";
 
 #ifdef LOAD_MODULE_REALTIME
 
@@ -78,14 +78,14 @@ typedef struct realtime_conn_info rtconn;
 
 struct realtime_info {
   timeval        last_scheduled_time;	/* time of the last network statistics  */
-                                        /* as it would appear in the ideal case */
+  /* as it would appear in the ideal case */
   timeval        last_actual_time;	/* time of the last network statistics  */
-                                        /* when it actually happened            */
+  /* when it actually happened            */
   rtconn         *conn_head;		/* head of the list of tcp connections */
   rtconn         *conn_tail;		/* tail of the list of tcp connections */
 
   u_long        open_conns;		/* number of new connections within the 
-				   	   time interval */
+                                 time interval */
   u_long        total_conns;		/* number of currect active connections */
 };
 
@@ -110,9 +110,9 @@ static struct protocol *plist = NULL;
 /* declarations of memory management functions for the module */
 static long rtconn_pool   = -1;
 
-static rtconn *
+  static rtconn *
 MakeRtconn(
-	   void)
+    void)
 {
   rtconn *ptr = NULL;
 
@@ -124,24 +124,24 @@ MakeRtconn(
   return ptr;
 }
 
-static void
+  static void
 FreeRtconn(
-	   rtconn *ptr)
+    rtconn *ptr)
 {
   PoolFree(rtconn_pool, ptr);
 }
 
 
-void
+  void
 realtime_usage(void)
 {
   printf("\t-xrealtime\tan example module showing how to use real-time tcptrace\n");
 }
 
-int
+  int
 realtime_init(
-	      int argc,
-	      char *argv[])
+    int argc,
+    char *argv[])
 {
   int		i;
   int		enable = 0;
@@ -153,10 +153,10 @@ realtime_init(
 
     if (strncmp(argv[i],"-x", 2) == 0) {
       if (strncasecmp(argv[i] + 2, "realtime", 8) == 0) {
-	/* I want to be called */
-	enable = 1;
-	fprintf(stderr, "mod_realtime: Capturing traffic\n");
-	argv[i] = NULL;
+        /* I want to be called */
+        enable = 1;
+        fprintf(stderr, "mod_realtime: Capturing traffic\n");
+        argv[i] = NULL;
       }
     }
   }
@@ -186,67 +186,67 @@ realtime_init(
   /* conn_num_threshold = TRUE;
      update_interval = 60;
      max_conn_num = 20000;
-   */
-  
+     */
+
   do_udp = TRUE;
 
   return(1);	/* TRUE means call other realtime routines later */
 }
 
-void
+  void
 realtime_done(void)
 {
   struct protocol *pp;
- 
+
   fprintf(stdout, "\nrealtime: TCP packets - %" FS_ULL "\n", tcp_packets);
   fprintf(stdout, "realtime: UDP packets - %" FS_ULL "\n", udp_packets);
   fprintf(stdout, "realtime: other packets - %" FS_ULL "\n", nontcpudp_packets);
 
   for (pp = plist; pp; pp = pp->next)
-   fprintf(stdout, "\tprotocol: %3u, number: %" FS_ULL "\n", pp->ip_p, pp->count);
+    fprintf(stdout, "\tprotocol: %3u, number: %" FS_ULL "\n", pp->ip_p, pp->count);
 
   fprintf(stdout, "\n");
 }
 
 void *
 realtime_newconn( 
-		 tcp_pair *ptp)
+    tcp_pair *ptp)
 {
-   rtconn *new_conn = MakeRtconn();
-   
-   if (mod_info->last_scheduled_time.tv_sec == 0) {
-      mod_info->last_scheduled_time = current_time;
-      mod_info->last_actual_time = current_time;
-   }
-   
-   new_conn->first_time = current_time;
-   new_conn->last_time = current_time;
-   new_conn->is_new = TRUE;
-   new_conn->is_closed = FALSE;
-   new_conn->addr_pair = ptp->addr_pair;
-   new_conn->ptp = ptp;
-   new_conn->next = NULL;
-   new_conn->prev = NULL;
-   
-   if (mod_info->conn_head != NULL) {
-      mod_info->conn_tail->next = new_conn;
-      new_conn->prev = mod_info->conn_tail;
-      mod_info->conn_tail = new_conn;
-   }
-   else { /* the list is empty */
-      mod_info->conn_head = new_conn;
-      mod_info->conn_tail = new_conn;
-   }
-   mod_info->total_conns++;
-   mod_info->open_conns++;
-   
-   return new_conn;
+  rtconn *new_conn = MakeRtconn();
+
+  if (mod_info->last_scheduled_time.tv_sec == 0) {
+    mod_info->last_scheduled_time = current_time;
+    mod_info->last_actual_time = current_time;
+  }
+
+  new_conn->first_time = current_time;
+  new_conn->last_time = current_time;
+  new_conn->is_new = TRUE;
+  new_conn->is_closed = FALSE;
+  new_conn->addr_pair = ptp->addr_pair;
+  new_conn->ptp = ptp;
+  new_conn->next = NULL;
+  new_conn->prev = NULL;
+
+  if (mod_info->conn_head != NULL) {
+    mod_info->conn_tail->next = new_conn;
+    new_conn->prev = mod_info->conn_tail;
+    mod_info->conn_tail = new_conn;
+  }
+  else { /* the list is empty */
+    mod_info->conn_head = new_conn;
+    mod_info->conn_tail = new_conn;
+  }
+  mod_info->total_conns++;
+  mod_info->open_conns++;
+
+  return new_conn;
 }
 
-void
+  void
 realtime_deleteconn(
-		    tcp_pair *ptp,	/* info I have about this connection */
-		    void *mod_data)	/* module specific info for this conn*/
+    tcp_pair *ptp,	/* info I have about this connection */
+    void *mod_data)	/* module specific info for this conn*/
 {
   rtconn *conn = mod_data;
   Bool   done = FALSE;
@@ -277,16 +277,16 @@ realtime_deleteconn(
   return;
 }
 
-void
+  void
 realtime_read(
-	      struct ip *pip,	/* the packet */
-	      tcp_pair *ptp,	/* info I have about this connection */
-	      void *plast,	/* past byte in the packet */
-	      void *mod_data)	/* module specific info for this connection */
+    struct ip *pip,	/* the packet */
+    tcp_pair *ptp,	/* info I have about this connection */
+    void *plast,	/* past byte in the packet */
+    void *mod_data)	/* module specific info for this connection */
 {
   rtconn	*conn = mod_data;
   double 	dtime = 0;
-  
+
   ++tcp_packets;
 
   /* first, discard any connections that we aren't interested in. */
@@ -298,56 +298,56 @@ realtime_read(
   if (conn->is_new) {
     dtime = current_time.tv_sec + (current_time.tv_usec / 1000000.0);
     fprintf(stdout, "%.6f  %s\t%s new connection\n",
-	    dtime, ptp->a_endpoint, ptp->b_endpoint);
+        dtime, ptp->a_endpoint, ptp->b_endpoint);
     conn->is_new = FALSE;
   }
 
   conn->last_time = current_time;
-   
+
   if (!conn->is_closed) {
     if ((FinCount(ptp) >= 1) || (ConnReset(ptp))) {
       if (dtime == 0) {
-	dtime = current_time.tv_sec + (current_time.tv_usec / 1000000.0);
+        dtime = current_time.tv_sec + (current_time.tv_usec / 1000000.0);
       }
       fprintf(stdout, "%.6f  %s\t%s connection closes (had %" FS_ULL " packets)\n",
-	      dtime, ptp->a_endpoint, ptp->b_endpoint, ptp->packets);
+          dtime, ptp->a_endpoint, ptp->b_endpoint, ptp->packets);
       conn->is_closed = TRUE;
       mod_info->open_conns--;
     }
   }
 
   if ((elapsed(mod_info->last_scheduled_time, current_time) / 1000000.0) >= 
-       realtime_update_interval) {
-      if (dtime == 0) {
-	dtime = current_time.tv_sec + (current_time.tv_usec / 1000000.0);
-      }
-     fprintf(stdout, "%.6f  number of open connections is %lu\n", 
-	     dtime, mod_info->open_conns);
-     mod_info->last_scheduled_time.tv_sec += realtime_update_interval;
-     mod_info->last_actual_time = current_time;
+      realtime_update_interval) {
+    if (dtime == 0) {
+      dtime = current_time.tv_sec + (current_time.tv_usec / 1000000.0);
+    }
+    fprintf(stdout, "%.6f  number of open connections is %lu\n", 
+        dtime, mod_info->open_conns);
+    mod_info->last_scheduled_time.tv_sec += realtime_update_interval;
+    mod_info->last_actual_time = current_time;
   }
 }
 
-void 
+  void 
 realtime_udp_read(
-		  struct ip *pip, 
-		  udp_pair *pup, 
-		  void *plast, 
-		  void *pmodstruct)
+    struct ip *pip, 
+    udp_pair *pup, 
+    void *plast, 
+    void *pmodstruct)
 {
   ++udp_packets;
 }
 
-void
+  void
 realtime_nontcpudp_read(
-			struct ip *pip, 
-			void *plast)
+    struct ip *pip, 
+    void *plast)
 {
   struct protocol *last = NULL;
   struct protocol *current; 
 
   ++nontcpudp_packets;
-   
+
   if (plist == NULL) {
     plist = (struct protocol *)MallocZ(sizeof(struct protocol));
     current = plist;
@@ -359,7 +359,7 @@ realtime_nontcpudp_read(
   else {
     for (current = plist; current; current = current->next) {
       if (current->ip_p == pip->ip_p) {
-	current->count++;
+        current->count++;
         break;
       }
       else {
